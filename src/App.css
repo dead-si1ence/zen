@@ -1,0 +1,23 @@
+#root {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Add some custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(18, 18, 18, 0.7);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-accent);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-accent);
+}

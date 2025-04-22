@@ -1,0 +1,743 @@
+.sport-page {
+  padding: 2rem;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sport Header */
+.sport-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.sport-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+  border-radius: 2px;
+}
+
+.sport-page-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 15px rgba(3, 218, 198, 0.5));
+}
+
+.sport-header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8));
+}
+
+.sport-header p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+/* API Sources Section */
+.api-sources {
+  margin-bottom: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.api-sources h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: var(--secondary-accent);
+}
+
+.api-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.api-card {
+  background-color: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(187, 134, 252, 0.1);
+  transition: all 0.3s ease;
+  min-height: 200px;
+  position: relative;
+  z-index: 1; /* Ensure proper stacking */
+  transform: translateZ(0); /* Hardware acceleration */
+  will-change: transform, box-shadow, background-color; /* Performance hint */
+}
+
+.api-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(3, 218, 198, 0.07), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.api-card:hover::before {
+  opacity: 1;
+}
+
+.api-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--primary-accent);
+}
+
+.api-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: var(--secondary-accent);
+  transition: width 0.3s ease;
+}
+
+.api-card:hover h3::after {
+  width: 80px;
+}
+
+.api-card p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+/* Predictions Section */
+.predictions-section {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 3rem;
+}
+
+.predictions-section h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: var(--secondary-accent);
+}
+
+.prediction-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem; /* Increase gap to prevent overlapping */
+  position: relative; /* Add position relative */
+}
+
+.prediction-card {
+  background-color: rgba(18, 18, 18, 0.95);
+  border-radius: 15px;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(187, 134, 252, 0.15);
+  position: relative;
+  will-change: transform, box-shadow; /* Performance hint */
+}
+
+.prediction-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(187, 134, 252, 0.05) 0%, transparent 40%, rgba(3, 218, 198, 0.05) 100%);
+  border-radius: 15px;
+  z-index: -1;
+}
+
+.fighters {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fighter {
+  text-align: center;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  width: 40%;
+}
+
+.fighter h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.fighter-1 h3 {
+  color: var(--primary-accent);
+}
+
+.fighter-2 h3 {
+  color: var(--secondary-accent);
+}
+
+.fighter p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1rem;
+}
+
+.win-chance {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.versus {
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.prediction-details {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.event {
+  color: var(--primary-accent);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prediction-summary {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Floating particles */
+.floating-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--primary-accent), transparent 70%);
+  box-shadow: 0 0 10px var(--primary-accent);
+  opacity: 0.2;
+  pointer-events: none;
+  will-change: transform; /* Performance hint */
+}
+
+/* Race details for F1 */
+.race-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.race-detail {
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.3rem;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Team standings for F1 */
+.team-standings {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-standings h4 {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.standings-table th {
+  text-align: left;
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.standings-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.team-name {
+  display: flex;
+  align-items: center;
+}
+
+.team-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.8rem;
+}
+
+/* Esports specific styles */
+.esports-page {
+  position: relative;
+}
+
+.typing-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(3, 218, 198, 0.5);
+}
+
+.esports-card {
+  border: 1px solid rgba(3, 218, 198, 0.2);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(18, 18, 18, 1) 100%);
+  position: relative;
+  margin-bottom: 1rem; /* Add margin to prevent content overlap */
+}
+
+.esports-card-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.game-badge {
+  background-color: rgba(187, 134, 252, 0.2);
+  color: var(--primary-accent);
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+  border: 1px solid var(--primary-accent);
+}
+
+.game-badge.lol {
+  background-color: rgba(3, 218, 198, 0.2);
+  color: var(--secondary-accent);
+  box-shadow: 0 0 10px rgba(3, 218, 198, 0.3);
+  border: 1px solid var(--secondary-accent);
+}
+
+.esports-details {
+  position: relative;
+  overflow: hidden;
+}
+
+.digital-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(3, 218, 198, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(3, 218, 198, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: -1;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.digital-particle {
+  border-radius: 0;
+  width: 3px;
+  height: 3px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.digital-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(3, 218, 198, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(3, 218, 198, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* End of Esports specific styles */
+
+/* Football specific styles */
+.football-page {
+  position: relative;
+}
+
+.football-card {
+  position: relative;
+  overflow: visible;
+  margin-top: 25px !important; /* Ensure space for the label that's positioned above */
+}
+
+.league-badge {
+  position: absolute;
+  top: -20px; /* Move up slightly */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-accent);
+  color: var(--background);
+  padding: 0.3rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  z-index: 5; /* Ensure it's above the card */
+  box-shadow: 0 0 20px rgba(187, 134, 252, 0.4);
+}
+
+.league-badge.laliga {
+  background: var(--secondary-accent);
+}
+
+.match-stats {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.form-indicators {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.form-indicators.opponent {
+  margin-top: 0.3rem;
+}
+
+.form-win, .form-loss, .form-draw {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.form-win {
+  background-color: rgba(3, 218, 198, 0.2);
+  color: #03DAC6;
+  border: 1px solid rgba(3, 218, 198, 0.4);
+}
+
+.form-loss {
+  background-color: rgba(255, 85, 85, 0.2);
+  color: #ff5555;
+  border: 1px solid rgba(255, 85, 85, 0.4);
+}
+
+.form-draw {
+  background-color: rgba(255, 215, 85, 0.2);
+  color: #ffd755;
+  border: 1px solid rgba(255, 215, 85, 0.4);
+}
+
+.football-particle {
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 0 15px currentColor;
+}
+
+/* End of Football specific styles */
+
+/* Fight Card styles for UFC page */
+.fight-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 4rem;
+}
+
+.fight-card {
+  background-color: rgba(18, 18, 18, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  will-change: transform; /* Performance hint */
+  transform: translateZ(0); /* Hardware acceleration */
+}
+
+.event-header {
+  padding: 1rem;
+  background: linear-gradient(90deg, rgba(187, 134, 252, 0.2), rgba(3, 218, 198, 0.2));
+  text-align: center;
+}
+
+.event-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.fight-main {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fighter-profile {
+  text-align: center;
+  width: 45%;
+}
+
+.fighter-profile img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-accent);
+  box-shadow: 0 0 15px rgba(187, 134, 252, 0.3);
+  margin-bottom: 0.8rem;
+}
+
+.fighter-profile.right img {
+  border-color: var(--secondary-accent);
+  box-shadow: 0 0 15px rgba(3, 218, 198, 0.3);
+}
+
+.fighter-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.fighter-record {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+}
+
+.fighter-odds {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.vs-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: var(--text);
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border: 1px solid rgba(187, 134, 252, 0.3);
+  box-shadow: 0 0 15px rgba(3, 218, 198, 0.3);
+  z-index: 2; /* Ensure it's above fighters */
+}
+
+.prediction-result {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.prediction-method {
+  color: var(--secondary-accent);
+  font-weight: 500;
+}
+
+/* Fix for card overlapping */
+.sport-card {
+  margin-bottom: 15px;
+  clear: both;
+  position: relative;
+  z-index: 1; /* Ensure proper stacking */
+  will-change: transform, box-shadow, background-color; /* Performance hint */
+}
+
+/* Firefox specific optimizations */
+@supports (-moz-appearance: none) {
+  .sport-header h1 {
+    /* Firefox fallback for gradient text */
+    text-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+  }
+  
+  .prediction-card, 
+  .fight-card, 
+  .api-card, 
+  .sport-card {
+    /* Improve performance in Firefox */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+  }
+  
+  .particle,
+  .sport-page-icon {
+    /* Optimize animations in Firefox */
+    transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+  }
+  
+  /* Reduce animation complexity in Firefox */
+  @media (-moz-platform: windows) {
+    .floating-particles {
+      opacity: 0.7;
+    }
+    
+    .particle {
+      animation-duration: 20s !important; /* Slower animations for better performance */
+    }
+  }
+}
+
+/* Media queries for responsive design */
+@media (max-width: 992px) {
+  .api-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .fight-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .api-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .sport-header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .fighters {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .fighter {
+    width: 100%;
+  }
+  
+  .versus {
+    margin: 1rem 0;
+  }
+  
+  .race-details {
+    gap: 1rem;
+  }
+  
+  .race-detail {
+    width: calc(50% - 2rem);
+    padding: 0.5rem;
+  }
+}

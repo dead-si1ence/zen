@@ -1,0 +1,29 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 0;
+}
+
+.main-content .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.footer {
+  background-color: rgba(18, 18, 18, 0.95);
+  border-top: 1px solid rgba(187, 134, 252, 0.2);
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,17 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="esports-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BB86FC" />
+      <stop offset="100%" stop-color="#03DAC6" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#esports-gradient)" stroke-width="3">
+    <rect x="20" y="30" width="60" height="40" rx="5" />
+    <rect x="35" y="40" width="30" height="20" rx="2" fill="rgba(3, 218, 198, 0.2)" />
+    <circle cx="30" cy="50" r="5" fill="url(#esports-gradient)" />
+    <circle cx="70" cy="50" r="5" fill="url(#esports-gradient)" />
+    <rect x="40" y="70" width="20" height="5" />
+    <path d="M50 75 L50 85" stroke-width="2" />
+    <path d="M40 85 L60 85" stroke-width="2" />
+  </g>
+</svg>
