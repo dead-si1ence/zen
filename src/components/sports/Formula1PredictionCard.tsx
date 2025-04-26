@@ -94,32 +94,47 @@ const Formula1PredictionCard: React.FC<Formula1PredictionCardProps> = ({ predict
             <h4>Predicted Podium</h4>
             
             <div className="podium-positions">
-              {prediction.podium.length >= 2 && (
-                <div className="podium-position position-2">
-                  <span className="position-number">2</span>
-                  <div className="team-color" style={{ backgroundColor: '#ccc' }}></div>
-                  <span className="driver-name">{prediction.podium[1].name}</span>
-                  <span className="team-name">{prediction.podium[1].team}</span>
+              {/* Second Place - Left */}
+              <div className="podium-position p2">
+                <span className="position-number">2</span>
+                <div className="driver-card">
+                  <img 
+                    src={prediction.podium[1]?.driver.image || '/zen/placeholder-driver.png'} 
+                    alt={prediction.podium[1]?.driver.name} 
+                    className="driver-image"
+                  />
+                  <span className="driver-name">{prediction.podium[1]?.driver.name}</span>
+                  <span className="team-name">{prediction.podium[1]?.driver.team}</span>
                 </div>
-              )}
-              
-              {prediction.podium.length >= 1 && (
-                <div className="podium-position position-1">
-                  <span className="position-number">1</span>
-                  <div className="team-color" style={{ backgroundColor: '#ccc' }}></div>
-                  <span className="driver-name">{prediction.podium[0].name}</span>
-                  <span className="team-name">{prediction.podium[0].team}</span>
+              </div>
+
+              {/* First Place - Center */}
+              <div className="podium-position p1">
+                <span className="position-number">1</span>
+                <div className="driver-card">
+                  <img 
+                    src={prediction.podium[0]?.driver.image || '/zen/placeholder-driver.png'} 
+                    alt={prediction.podium[0]?.driver.name} 
+                    className="driver-image"
+                  />
+                  <span className="driver-name">{prediction.podium[0]?.driver.name}</span>
+                  <span className="team-name">{prediction.podium[0]?.driver.team}</span>
                 </div>
-              )}
-              
-              {prediction.podium.length >= 3 && (
-                <div className="podium-position position-3">
-                  <span className="position-number">3</span>
-                  <div className="team-color" style={{ backgroundColor: '#ccc' }}></div>
-                  <span className="driver-name">{prediction.podium[2].name}</span>
-                  <span className="team-name">{prediction.podium[2].team}</span>
+              </div>
+
+              {/* Third Place - Right */}
+              <div className="podium-position p3">
+                <span className="position-number">3</span>
+                <div className="driver-card">
+                  <img 
+                    src={prediction.podium[2]?.driver.image || '/zen/placeholder-driver.png'} 
+                    alt={prediction.podium[2]?.driver.name} 
+                    className="driver-image"
+                  />
+                  <span className="driver-name">{prediction.podium[2]?.driver.name}</span>
+                  <span className="team-name">{prediction.podium[2]?.driver.team}</span>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         )}

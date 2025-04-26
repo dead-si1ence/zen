@@ -1,13 +1,11 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import VideoBackground from '../common/VideoBackground';
 import { SportType } from '../../types/models';
 import '../../styles/SportPage.css';
 
 interface SportPageProps {
   title: string;
   sportType: SportType;
-  videoSrc?: string;
   fallbackImageSrc?: string;
   children: ReactNode;
   themeColor?: string;
@@ -16,7 +14,6 @@ interface SportPageProps {
 const SportPage = ({
   title,
   sportType,
-  videoSrc,
   fallbackImageSrc,
   children,
   themeColor
@@ -62,37 +59,26 @@ const SportPage = ({
     }
   };
   
-  const headerStyle = themeColor ? { backgroundColor: themeColor } : {};
+  const headerStyle = {
+    ...(themeColor ? { backgroundColor: themeColor } : {}),
+    ...(fallbackImageSrc ? { 
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${fallbackImageSrc})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    } : {})
+  };
 
   return (
     <div className={`sport-page ${getSportClass()}`}>
-      {videoSrc ? (
-        <VideoBackground 
-          videoSrc={videoSrc}
-          overlayOpacity={0.8}
-          fallbackImageSrc={fallbackImageSrc}
+      <div className="sport-page-header" style={headerStyle}>
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <div className="sport-page-header" style={headerStyle}>
-            <motion.h1
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            >
-              {title}
-            </motion.h1>
-          </div>
-        </VideoBackground>
-      ) : (
-        <div className="sport-page-header" style={headerStyle}>
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            {title}
-          </motion.h1>
-        </div>
-      )}
+          {title}
+        </motion.h1>
+      </div>
 
       <motion.div
         className="sport-page-content"

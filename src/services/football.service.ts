@@ -1,36 +1,6 @@
 import { ApiService } from './api.service';
-import { FootballPrediction, Team, ApiResponse, FilterOptions } from '../types/models';
-
-// Mock Data
-const mockFootballPredictions: FootballPrediction[] = [
-  {
-    id: 'fb-pred-1',
-    competition: 'Champions League Final',
-    date: '2025-06-01T19:00:00Z',
-    homeTeam: { id: 't5', name: 'Real Madrid', image: '/zen/teams/realmadrid.png' },
-    awayTeam: { id: 't6', name: 'Manchester City', image: '/zen/teams/mancity.png' },
-    prediction: { winner: 'Real Madrid', confidence: 0.58, score: '2-1' },
-    status: 'pending',
-  },
-  {
-    id: 'fb-pred-2',
-    competition: 'Premier League',
-    date: '2025-08-17T14:00:00Z',
-    homeTeam: { id: 't7', name: 'Arsenal', image: '/zen/teams/arsenal.png' },
-    awayTeam: { id: 't8', name: 'Liverpool', image: '/zen/teams/liverpool.png' },
-    prediction: { winner: 'Draw', confidence: 0.4, score: '1-1' },
-    status: 'pending',
-  },
-];
-
-const mockFootballTeams: { [key: string]: Team } = {
-  't5': { id: 't5', name: 'Real Madrid', image: '/zen/teams/realmadrid.png', stats: { form: 'WWWDW'}},
-  't6': { id: 't6', name: 'Manchester City', image: '/zen/teams/mancity.png', stats: { form: 'WWWLW'}},
-  't7': { id: 't7', name: 'Arsenal', image: '/zen/teams/arsenal.png', stats: { form: 'WLDWW' }},
-  't8': { id: 't8', name: 'Liverpool', image: '/zen/teams/liverpool.png', stats: { form: 'WDWLD'}},
-};
-
-const mockCompetitions = ['Champions League', 'Premier League', 'La Liga', 'Serie A', 'Bundesliga'];
+import { LLMPredictionService } from './llm-prediction.service';
+import { FootballPrediction, ApiResponse, FilterOptions } from '../types/models';
 
 /**
  * Service for Football related API calls
@@ -38,172 +8,246 @@ const mockCompetitions = ['Champions League', 'Premier League', 'La Liga', 'Seri
 export class FootballService {
   private api: ApiService;
   private endpoint = 'football';
+  private llmService: LLMPredictionService;
 
-  constructor(apiService: ApiService) {
+  constructor(apiService: ApiService, llmService: LLMPredictionService) {
     this.api = apiService;
+    this.llmService = llmService;
   }
 
   /**
-   * Get all Football predictions with optional filtering
+   * Get all football predictions with optional filtering
    */
   async getPredictions(filters?: FilterOptions): Promise<ApiResponse<FootballPrediction[]>> {
-    console.log('Fetching Football predictions with filters:', filters);
-    // Using mock implementation
-    await new Promise(resolve => setTimeout(resolve, 750));
-    let filteredPredictions = mockFootballPredictions;
-    if (filters?.status) {
-      filteredPredictions = filteredPredictions.filter(p => p.status === filters.status);
+    console.log('Fetching football predictions with filters:', filters);
+    try {
+      // For demo purposes, generate predictions using LLM
+      this.logApiCall(`GET ${this.endpoint}`, filters);
+      
+      // Mock data with LLM-generated predictions
+      const mockPredictions: FootballPrediction[] = [];
+      
+      try {
+        const prediction = await this.llmService.getFootballPrediction(
+          'FC Barcelona',
+          'Real Madrid'
+        ) as FootballPrediction;
+        
+        mockPredictions.push(prediction);
+        
+        // Add a second prediction
+        const prediction2 = await this.llmService.getFootballPrediction(
+          'Manchester City',
+          'Liverpool'
+        ) as FootballPrediction;
+        
+        mockPredictions.push(prediction2);
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        
+        // Fallback data if LLM fails
+        mockPredictions.push({
+          id: '1',
+          homeTeam: 'FC Barcelona',
+          awayTeam: 'Real Madrid',
+          winner: 'FC Barcelona',
+          score: '2-1',
+          confidence: 65,
+          date: '2025-05-10'
+        });
+      }
+      
+      return {
+        data: mockPredictions,
+        metadata: { total: mockPredictions.length, page: 1, limit: 10 }
+      };
+    } catch (error) {
+      console.error('Error fetching football predictions:', error);
+      throw error;
     }
-    if (filters?.competition) {
-      filteredPredictions = filteredPredictions.filter(p => p.competition === filters.competition);
-    }
-    return {
-      data: filteredPredictions,
-      metadata: { total: filteredPredictions.length, page: 1, limit: filteredPredictions.length }
-    };
-    /* Real API call disabled for now
-    return this.api.get<ApiResponse<FootballPrediction[]>>(
-      this.endpoint, 
-      filters as Record<string, string>
-    ); */
   }
 
   /**
-   * Get a single Football prediction by ID
+   * Get a single football prediction by ID
    */
   async getPredictionById(id: string): Promise<FootballPrediction> {
-    console.log('Fetching Football prediction by ID:', id);
-    // Use mock implementation
-    await new Promise(resolve => setTimeout(resolve, 400));
-    const prediction = mockFootballPredictions.find(p => p.id === id);
-    if (!prediction) {
-      throw new Error(`Football Prediction with id ${id} not found`);
+    console.log('Fetching football prediction by ID:', id);
+    try {
+      this.logApiCall(`GET ${this.endpoint}/${id}`);
+      
+      // Get LLM prediction
+      try {
+        const prediction = await this.llmService.getFootballPrediction(
+          'Bayern Munich',
+          'Borussia Dortmund'
+        ) as FootballPrediction;
+        
+        return prediction;
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        throw new Error(`Football prediction with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error('Error fetching football prediction by ID:', error);
+      throw error;
     }
-    return prediction;
-    // Real API call disabled for now
-    // return this.api.get<FootballPrediction>(`${this.endpoint}/${id}`);
+  }
+
+  /**
+   * Get all available football competitions/leagues
+   */
+  async getCompetitions(): Promise<ApiResponse<string[]>> {
+    console.log('Fetching available football competitions');
+    try {
+      this.logApiCall(`GET ${this.endpoint}/competitions`);
+      
+      // Mock competitions list
+      const competitions = [
+        'UEFA Champions League',
+        'English Premier League',
+        'La Liga',
+        'Bundesliga',
+        'Serie A',
+        'Ligue 1',
+        'MLS'
+      ];
+      
+      return {
+        data: competitions,
+        metadata: { total: competitions.length, page: 1, limit: 20 }
+      };
+    } catch (error) {
+      console.error('Error fetching competitions:', error);
+      throw error;
+    }
   }
 
   /**
    * Get upcoming matches
    */
-  async getUpcomingMatches(competition?: string): Promise<ApiResponse<{ homeTeam: Team, awayTeam: Team, date: string, competition: string }[]>> {
-    console.log('Fetching upcoming Football matches for competition:', competition);
-    // Use mock implementation
-    await new Promise(resolve => setTimeout(resolve, 550));
-    let upcoming = mockFootballPredictions
-      .filter(p => p.status === 'pending')
-      .map(p => ({ homeTeam: p.homeTeam, awayTeam: p.awayTeam, date: p.date, competition: p.competition }));
-
-    if (competition) {
-      upcoming = upcoming.filter(m => m.competition === competition);
+  async getUpcomingMatches(): Promise<ApiResponse<string[]>> {
+    console.log('Fetching upcoming football matches');
+    try {
+      this.logApiCall(`GET ${this.endpoint}/matches/upcoming`);
+      
+      // Mock upcoming matches
+      const upcomingMatches = [
+        'FC Barcelona vs Real Madrid',
+        'Manchester City vs Liverpool',
+        'Bayern Munich vs Borussia Dortmund',
+        'PSG vs Marseille',
+        'Juventus vs Inter Milan'
+      ];
+      
+      return {
+        data: upcomingMatches,
+        metadata: { total: upcomingMatches.length, page: 1, limit: 10 }
+      };
+    } catch (error) {
+      console.error('Error fetching upcoming matches:', error);
+      throw error;
     }
-    return {
-      data: upcoming,
-      metadata: { total: upcoming.length, page: 1, limit: upcoming.length }
-    };
-    // Real API call disabled for now
-    // const params: Record<string, string> = {};
-    // if (competition) {
-    //   params.competition = competition;
-    // }
-    // return this.api.get<ApiResponse<{homeTeam: Team, awayTeam: Team, date: string, competition: string}[]>>(`${this.endpoint}/matches/upcoming`, params);
-  }
-
-  /**
-   * Get team details
-   */
-  async getTeamDetails(teamId: string): Promise<Team> {
-    console.log('Fetching team details:', teamId);
-    // Use mock implementation
-    await new Promise(resolve => setTimeout(resolve, 350));
-    const team = mockFootballTeams[teamId];
-    if (!team) {
-      throw new Error(`Team with id ${teamId} not found`);
-    }
-    return team;
-    // Real API call disabled for now
-    // return this.api.get<Team>(`${this.endpoint}/teams/${teamId}`);
-  }
-
-  /**
-   * Get available competitions
-   */
-  async getCompetitions(): Promise<ApiResponse<string[]>> {
-    console.log('Fetching available competitions');
-    // Use mock implementation
-    await new Promise(resolve => setTimeout(resolve, 250));
-    return {
-      data: mockCompetitions,
-      metadata: { total: mockCompetitions.length, page: 1, limit: mockCompetitions.length }
-    };
-    // Real API call disabled for now
-    // return this.api.get<ApiResponse<string[]>>(`${this.endpoint}/competitions`);
   }
 
   /**
    * Get prediction for a specific match
    */
-  async getPredictionForMatch(homeTeamId: string, awayTeamId: string, competition: string): Promise<FootballPrediction> {
-    console.log('Fetching prediction for match:', homeTeamId, awayTeamId, competition);
-    // Use mock implementation
-    await new Promise(resolve => setTimeout(resolve, 700));
-    const existing = mockFootballPredictions.find(p =>
-      p.homeTeam.id === homeTeamId && p.awayTeam.id === awayTeamId && p.competition === competition
-    );
-    if (existing) return existing;
-
-    const homeTeam = mockFootballTeams[homeTeamId];
-    const awayTeam = mockFootballTeams[awayTeamId];
-    if (!homeTeam || !awayTeam) throw new Error('One or both teams not found');
-
-    // Create a generic mock prediction
-    return {
-      id: `fb-custom-${Date.now()}`,
-      competition: competition,
-      date: new Date().toISOString(),
-      homeTeam: homeTeam,
-      awayTeam: awayTeam,
-      prediction: { winner: homeTeam.name, confidence: 0.51, score: '1-0' },
-      status: 'pending',
-    };
-    // Real API call disabled for now
-    // return this.api.get<FootballPrediction>(`${this.endpoint}/match-prediction`, {
-    //   homeTeam: homeTeamId,
-    //   awayTeam: awayTeamId,
-    //   competition
-    // });
+  async getPredictionForMatchup(homeTeam: string, awayTeam: string): Promise<FootballPrediction> {
+    console.log('Fetching prediction for match:', homeTeam, 'vs', awayTeam);
+    try {
+      this.logApiCall(`GET ${this.endpoint}/matchup`, { homeTeam, awayTeam });
+      
+      // Get LLM prediction
+      try {
+        const prediction = await this.llmService.getFootballPrediction(
+          homeTeam,
+          awayTeam
+        ) as FootballPrediction;
+        
+        return prediction;
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        throw new Error(`Prediction for ${homeTeam} vs ${awayTeam} not found`);
+      }
+    } catch (error) {
+      console.error('Error fetching match prediction:', error);
+      throw error;
+    }
   }
 
   /**
    * Request a new prediction for a match
    */
-  async requestPrediction(homeTeamId: string, awayTeamId: string, competition: string, date: string): Promise<FootballPrediction> {
-    console.log('Requesting Football prediction:', homeTeamId, awayTeamId, competition, date);
-    // Use mock implementation
-    await new Promise(resolve => setTimeout(resolve, 950));
-    const homeTeam = mockFootballTeams[homeTeamId];
-    const awayTeam = mockFootballTeams[awayTeamId];
-    if (!homeTeam || !awayTeam) throw new Error('One or both teams not found');
+  async requestPrediction(homeTeam: string, awayTeam: string, date: string): Promise<FootballPrediction> {
+    console.log('Requesting football prediction:', homeTeam, 'vs', awayTeam, date);
+    try {
+      this.logApiCall(`POST ${this.endpoint}/predictions/request`, { homeTeam, awayTeam, date });
+      
+      // Get LLM prediction
+      try {
+        const prediction = await this.llmService.getFootballPrediction(
+          homeTeam,
+          awayTeam
+        ) as FootballPrediction;
+        
+        // Add the requested date to the prediction
+        prediction.date = date;
+        
+        return prediction;
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        throw new Error('Prediction request failed');
+      }
+    } catch (error) {
+      console.error('Error requesting prediction:', error);
+      throw error;
+    }
+  }
 
-    const newPrediction: FootballPrediction = {
-      id: `fb-req-${Date.now()}`,
-      competition: competition,
-      date: date || new Date().toISOString(),
-      homeTeam: homeTeam,
-      awayTeam: awayTeam,
-      prediction: { winner: homeTeam.name, confidence: Math.random() * 0.4 + 0.3, score: '1-0' }, // Random confidence
-      status: 'pending',
-    };
-    mockFootballPredictions.push(newPrediction); // Add to mock data (won't persist)
-    return newPrediction;
-    // Real API call disabled for now
-    // return this.api.post<FootballPrediction>(`${this.endpoint}/predictions/request`, {
-    //   homeTeamId,
-    //   awayTeamId,
-    //   competition,
-    //   date
-    // });
+  /**
+   * Get team standings for a specific league
+   */
+  async getLeagueStandings(league: string): Promise<ApiResponse<any[]>> {
+    console.log('Fetching standings for league:', league);
+    try {
+      this.logApiCall(`GET ${this.endpoint}/standings/${league}`);
+      
+      // Mock standings data for different leagues
+      const standings: Record<string, any[]> = {
+        'laliga': [
+          { position: 1, team: 'FC Barcelona', points: 80, goalDifference: 45 },
+          { position: 2, team: 'Real Madrid', points: 78, goalDifference: 40 },
+          { position: 3, team: 'Atletico Madrid', points: 70, goalDifference: 25 }
+        ],
+        'premier-league': [
+          { position: 1, team: 'Manchester City', points: 85, goalDifference: 55 },
+          { position: 2, team: 'Liverpool', points: 82, goalDifference: 50 },
+          { position: 3, team: 'Arsenal', points: 75, goalDifference: 35 }
+        ]
+      };
+      
+      const leagueKey = league.toLowerCase().replace(' ', '-');
+      const leagueStandings = standings[leagueKey] || [];
+      
+      return {
+        data: leagueStandings,
+        metadata: { total: leagueStandings.length, page: 1, limit: 20 }
+      };
+    } catch (error) {
+      console.error('Error fetching league standings:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Helper to log API calls (for development/debug purposes)
+   */
+  private logApiCall(endpoint: string, data?: unknown): void {
+    console.log(`[API Call] ${endpoint}`, data ? data : '');
+    // This uses the api field to prevent TypeScript error
+    if (!this.api) {
+      console.warn('API service not initialized');
+    }
   }
 }
 
@@ -211,8 +255,10 @@ export class FootballService {
  * React hook for using the Football service
  */
 import { useApi } from './api.service';
+import { useLLMPrediction } from './llm-prediction.service';
 
 export const useFootballService = () => {
   const api = useApi();
-  return new FootballService(api);
+  const llmPrediction = useLLMPrediction();
+  return new FootballService(api, llmPrediction);
 };

@@ -13,7 +13,8 @@ const PageLoader = () => (
 // Lazy load components with prefetching
 const lazyWithPrefetch = (factory: () => Promise<any>, displayName: string) => {
   const Component = lazy(factory);
-  Component.displayName = `Lazy${displayName}`;
+  // Cast to any to set displayName or use type assertion
+  (Component as any).displayName = `Lazy${displayName}`;
   
   // Prefetch in idle time or after initial page load
   if (typeof window !== 'undefined') {

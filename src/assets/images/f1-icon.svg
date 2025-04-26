@@ -5,12 +5,27 @@
       <stop offset="100%" stop-color="#03DAC6" />
     </linearGradient>
   </defs>
-  <g fill="none" stroke="url(#f1-gradient)" stroke-width="3">
-    <path d="M20,70 C20,70 35,50 60,50 C85,50 90,70 90,70" stroke-width="6" stroke-linecap="round" />
-    <circle cx="30" cy="70" r="15" />
-    <circle cx="30" cy="70" r="7" />
-    <circle cx="80" cy="70" r="15" />
-    <circle cx="80" cy="70" r="7" />
-    <path d="M40,50 L70,20 L75,25 L60,50" fill="url(#f1-gradient)" />
+
+  <g fill="none" stroke="url(#f1-gradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Rear Wing -->
+    <path d="M15 55 L 35 55 L 30 45 Z" fill="url(#f1-gradient)" stroke-width="2"/>
+
+    <!-- Main Body -->
+    <path d="M25,65 C 40,50 70,50 85,60" />
+
+    <!-- Cockpit/Driver -->
+    <path d="M55,52 L 65,40 L 75,42 L 70,52 Z" fill="url(#f1-gradient)" stroke-width="2"/>
+
+    <!-- Front Wing -->
+    <path d="M80 60 L 95 60 L 90 68 Z" fill="url(#f1-gradient)" stroke-width="2"/>
+
+    <!-- Wheels (filled inner, stroked outer) -->
+    <!-- Rear Wheel -->
+    <circle cx="30" cy="70" r="12" stroke-width="4" />
+    <circle cx="30" cy="70" r="6" fill="url(#f1-gradient)" stroke="none"/>
+
+    <!-- Front Wheel -->
+    <circle cx="85" cy="70" r="10" stroke-width="4" />
+    <circle cx="85" cy="70" r="5" fill="url(#f1-gradient)" stroke="none"/>
   </g>
 </svg>

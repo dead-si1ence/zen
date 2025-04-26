@@ -7,7 +7,7 @@ export interface Prediction {
   id: string;
   sport?: SportType;
   confidence?: number; // 0-100
-  status: PredictionStatus;
+  status?: PredictionStatus;
   date?: string;
   timestamp?: string;
   explanation?: string;
@@ -20,7 +20,12 @@ export interface UFCPrediction extends Prediction {
   fighter1: Fighter;
   fighter2: Fighter;
   date: string;
-  prediction: {
+  winner?: string;
+  method?: string;
+  round?: number;
+  confidence?: number;
+  // Keeping backward compatibility with existing code
+  prediction?: {
     winner: string;
     confidence: number;
     method: string;
@@ -35,8 +40,9 @@ export interface UFCPrediction extends Prediction {
 
 export interface Formula1Prediction extends Prediction {
   sport?: 'formula1';
-  grandPrix: string;
+  grandPrix?: string;
   date: string;
+  name?: string;
   predictions?: {
     pole?: Driver;
     podium?: Driver[];
@@ -48,7 +54,7 @@ export interface Formula1Prediction extends Prediction {
   location?: string;
   circuitLength?: string;
   laps?: number;
-  podium?: Driver[];
+  podium?: { position: number; driver: Driver }[];
   polePosition?: Driver;
   fastestLap?: Driver;
   weatherImpact?: string;
@@ -59,11 +65,14 @@ export interface Formula1Prediction extends Prediction {
 
 export interface FootballPrediction extends Prediction {
   sport?: 'football';
-  competition: string;
+  competition?: string;
   date: string;
-  homeTeam: Team;
-  awayTeam: Team;
-  prediction: {
+  homeTeam: string | Team;
+  awayTeam: string | Team;
+  winner?: string;
+  score?: string;
+  // Keeping backward compatibility with existing code
+  prediction?: {
     winner: string;
     confidence: number;
     score: string;
@@ -73,11 +82,15 @@ export interface FootballPrediction extends Prediction {
 export interface EsportsPrediction extends Prediction {
   sport?: 'esports';
   game: string;
-  tournament: string;
+  tournament?: string;
   date: string;
-  team1: Team;
-  team2: Team;
-  prediction: {
+  team1: string | Team;
+  team2: string | Team;
+  winner?: string;
+  score?: string;
+  mvp?: string;
+  // Keeping backward compatibility with existing code
+  prediction?: {
     winner: string;
     confidence: number;
     score: string;
@@ -86,12 +99,17 @@ export interface EsportsPrediction extends Prediction {
 
 // Sport entities
 export interface Fighter {
-  id: string;
+  id?: string;
   name: string;
-  record: string;
+  record?: string;
   imageUrl?: string;
+  team?: string;
   stats?: FighterStats;
   image?: string;
+  weightClass?: string;
+  age?: number;
+  height?: string;
+  reach?: string;
 }
 
 export interface FighterStats {
@@ -107,21 +125,25 @@ export interface FighterStats {
 }
 
 export interface Driver {
-  id: string;
+  id?: string;
   name: string;
-  team: string;
-  number: number;
+  team?: string;
+  number?: number;
   imageUrl?: string;
   image?: string;
-  stats?: any; // Added to fix the TS2353 errors
+  nationality?: string;
+  points?: number;
+  podiums?: number;
+  wins?: number;
+  stats?: any;
 }
 
 export interface Team {
-  id: string;
+  id?: string;
   name: string;
   logoUrl?: string;
   stats?: TeamStats;
-  image?: string; // Added to fix the TS2339 errors
+  image?: string;
 }
 
 export interface TeamStats {
@@ -131,7 +153,7 @@ export interface TeamStats {
   goalsScored?: number;
   goalsConceded?: number;
   form?: string;
-  winrate?: number; // Added to fix the TS2353 errors
+  winrate?: number;
 }
 
 export interface Score {
@@ -171,6 +193,7 @@ export interface Constructor {
   logo?: string;
   image?: string;  // Alternative field name used in some components
   color?: string;
+  nationality?: string;
 }
 
 // API response types

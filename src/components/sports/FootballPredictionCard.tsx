@@ -1,86 +1,86 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FootballPrediction } from '../../types/models';
-import { FiCalendar, FiShield, FiBarChart, FiPercent } from 'react-icons/fi';
-import { formatDate } from '../../utils/helpers';
-import './PredictionCard.css'; // Assuming a common CSS file for cards
+import { FiCalendar, FiBarChart, FiPercent, FiUsers } from 'react-icons/fi';
+import './PredictionCard.css';
 
 interface FootballPredictionCardProps {
   prediction: FootballPrediction;
   onClick: (prediction: FootballPrediction) => void;
 }
 
-const FootballPredictionCard: React.FC<FootballPredictionCardProps> = ({ prediction, onClick }) => {
-  const { competition, date, homeTeam, awayTeam, prediction: predDetails, status } = prediction;
+const FootballPredictionCard: React.FC<FootballPredictionCardProps> = (props) => {
+  // Handle potentially missing or malformed data
+  if (!props.prediction) {
+    console.error('Missing prediction data');
+    return null;
+  }
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-    hover: { 
-      scale: 1.03,
-      boxShadow: '0 10px 25px rgba(76, 175, 80, 0.2)', // Football green shadow
-      transition: { duration: 0.3 }
-    }
-  };
+  const { prediction, onClick } = props;
+  const { date, homeTeam, awayTeam, competition } = prediction;
 
-  const getStatusBadge = () => {
-    switch (status) {
-      case 'pending': return <span className="status-badge pending">Pending</span>;
-      case 'correct': return <span className="status-badge correct">Correct</span>;
-      case 'incorrect': return <span className="status-badge incorrect">Incorrect</span>;
-      default: return null;
-    }
-  };
+  // Handle both string and Team object types
+  const homeTeamName = typeof homeTeam === 'string' ? homeTeam : homeTeam?.name || 'Home Team';
+  const awayTeamName = typeof awayTeam === 'string' ? awayTeam : awayTeam?.name || 'Away Team';
+  const homeTeamImage = typeof homeTeam === 'string' ? '/zen/placeholder-team.png' : homeTeam?.image || '/zen/placeholder-team.png';
+  const awayTeamImage = typeof awayTeam === 'string' ? '/zen/placeholder-team.png' : awayTeam?.image || '/zen/placeholder-team.png';
+  
+  // Get prediction details with fallbacks
+  const winner = prediction.winner || 'TBD';
+  const confidence = prediction.confidence || 50;
+  const score = prediction.score || 'TBD';
+  
+  // Format date
+  const matchDate = date ? new Date(date).toLocaleDateString() : 'TBD';
 
   return (
-    <motion.div
-      className="prediction-card football-card" // Add specific class
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover="hover"
+    <motion.div 
+      className="prediction-card football-card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ scale: 1.03, boxShadow: '0 8px 16px rgba(0, 118, 255, 0.2)' }}
       onClick={() => onClick(prediction)}
     >
-      <div className="card-header">
-        <span className="game-tournament">{competition}</span>
-        {getStatusBadge()}
+      <div className="card-header football">
+        <span className="match-date">
+          <FiCalendar className="header-icon" />
+          {matchDate}
+        </span>
+        <span className="competition">{competition || 'Football Match'}</span>
       </div>
 
       <div className="teams-container">
         <div className="team">
-          <img src={homeTeam.image || '/zen/placeholder-team.png'} alt={homeTeam.name} className="team-logo" />
-          <span className="team-name">{homeTeam.name} (H)</span>
+          <img src={homeTeamImage} alt={homeTeamName} className="team-logo" />
+          <span className="team-name">{homeTeamName} (H)</span>
         </div>
         <span className="vs-separator">VS</span>
         <div className="team">
-          <img src={awayTeam.image || '/zen/placeholder-team.png'} alt={awayTeam.name} className="team-logo" />
-          <span className="team-name">{awayTeam.name} (A)</span>
+          <img src={awayTeamImage} alt={awayTeamName} className="team-logo" />
+          <span className="team-name">{awayTeamName} (A)</span>
         </div>
       </div>
 
-      <div className="prediction-info">
+      <div className="prediction-details">
         <div className="info-item">
-          <FiCalendar className="info-icon" />
-          <span>{formatDate(date)}</span>
+          <FiUsers className="info-icon" />
+          <span>Predicted Winner: <strong>{winner}</strong></span>
         </div>
-        <div className="info-item">
-          <FiShield className="info-icon" />
-          <span>Predicted Winner: <strong>{predDetails.winner}</strong></span>
-        </div>
-        {predDetails.score && (
+        {score && (
           <div className="info-item">
             <FiBarChart className="info-icon" />
-            <span>Predicted Score: {predDetails.score}</span>
+            <span>Predicted Score: {score}</span>
           </div>
         )}
         <div className="info-item confidence">
           <FiPercent className="info-icon" />
-          <span>Confidence: {(predDetails.confidence * 100).toFixed(0)}%</span>
+          <span>Confidence: {confidence}%</span>
           <div className="confidence-bar-bg">
             <motion.div 
               className="confidence-bar-fg football-confidence"
               initial={{ width: 0 }}
-              animate={{ width: `${predDetails.confidence * 100}%` }}
+              animate={{ width: `${confidence}%` }}
               transition={{ duration: 0.8, delay: 0.3 }}
             />
           </div>

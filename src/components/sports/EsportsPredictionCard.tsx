@@ -19,11 +19,11 @@ const EsportsPredictionCard: React.FC<EsportsPredictionCardProps> = ({ predictio
 
   const { game, tournament, date, team1, team2, prediction: predDetails, status } = prediction;
 
-  // Guard against malformed data
-  const team1Name = team1?.name || 'Team 1';
-  const team2Name = team2?.name || 'Team 2';
-  const team1Image = team1?.image || '/zen/placeholder-team.png';
-  const team2Image = team2?.image || '/zen/placeholder-team.png';
+  // Handle both string and Team object types
+  const team1Name = typeof team1 === 'string' ? team1 : team1?.name || 'Team 1';
+  const team2Name = typeof team2 === 'string' ? team2 : team2?.name || 'Team 2';
+  const team1Image = typeof team1 === 'string' ? '/zen/placeholder-team.png' : team1?.image || '/zen/placeholder-team.png';
+  const team2Image = typeof team2 === 'string' ? '/zen/placeholder-team.png' : team2?.image || '/zen/placeholder-team.png';
   const gameName = game || 'Unknown Game';
   const tournamentName = tournament || 'Unknown Tournament';
   

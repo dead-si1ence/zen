@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../App';
 import { useIsMobile, useReducedMotion } from '../hooks/useMediaQuery';
-import VideoBackground from '../components/common/VideoBackground';
 import '../styles/Home.css';
 
 // Import assets
@@ -11,7 +10,6 @@ import footballIcon from '../assets/images/football-icon.svg';
 import ufcIcon from '../assets/images/ufc-icon.svg';
 import f1Icon from '../assets/images/f1-icon.svg';
 import esportsIcon from '../assets/images/esports-icon.svg';
-import videoBackgroundSrc from '../assets/videos/video-background.mp4';
 
 const Home = () => {
   const { setIsLoading } = useContext(AppContext);
@@ -69,11 +67,12 @@ const Home = () => {
   };
 
   return (
-    <VideoBackground 
-      videoSrc={videoBackgroundSrc} 
-      overlayOpacity={0.7}
-      fallbackImageSrc="/zen/background-fallback.jpg"
-    >
+    <div className="home-container" style={{
+      background: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('/zen/background-fallback.jpg')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      minHeight: '100vh'
+    }}>
       <div className="home-content">
         {/* ZEN Logo with optimized positioning */}
         <motion.div 
@@ -184,7 +183,7 @@ const Home = () => {
           <p>Combining AI technology with sports analysis expertise</p>
         </motion.div>
       </div>
-    </VideoBackground>
+    </div>
   );
 };
 

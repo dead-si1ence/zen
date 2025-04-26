@@ -1,5 +1,5 @@
 import { HashRouter } from 'react-router-dom';
-import { lazy, Suspense, useState, createContext, useEffect, useRef } from 'react';
+import { Suspense, useState, createContext, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Layout from './components/layout/Layout';
 import AppRoutes from './routes';

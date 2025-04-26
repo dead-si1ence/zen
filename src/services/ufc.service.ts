@@ -1,34 +1,6 @@
 import { ApiService } from './api.service';
+import { LLMPredictionService } from './llm-prediction.service';
 import { UFCPrediction, Fighter, ApiResponse, FilterOptions } from '../types/models';
-
-// Mock Data
-const mockUFCPredictions: UFCPrediction[] = [
-  {
-    id: 'ufc-pred-1',
-    event: 'UFC 300',
-    date: '2025-07-15T20:00:00Z',
-    fighter1: { id: 'f1', name: 'Alex Pereira', record: '10-2-0', stats: { wins: 10, losses: 2, draws: 0, strikingAccuracy: 0.55, grapplingAccuracy: 0.2, takedownDefense: 0.7 } },
-    fighter2: { id: 'f2', name: 'Jamahal Hill', record: '12-1-0 (1 NC)', stats: { wins: 12, losses: 1, draws: 0, strikingAccuracy: 0.58, grapplingAccuracy: 0.1, takedownDefense: 0.65 } },
-    prediction: { winner: 'Alex Pereira', confidence: 0.65, method: 'KO/TKO', round: 2 },
-    status: 'pending',
-  },
-  {
-    id: 'ufc-pred-2',
-    event: 'UFC 299',
-    date: '2025-03-09T21:00:00Z',
-    fighter1: { id: 'f3', name: "Sean O'Malley", record: '18-1-0 (1 NC)', stats: { wins: 18, losses: 1, draws: 0, strikingAccuracy: 0.6, grapplingAccuracy: 0.3, takedownDefense: 0.75 } },
-    fighter2: { id: 'f4', name: 'Marlon Vera', record: '23-9-1', stats: { wins: 23, losses: 9, draws: 1, strikingAccuracy: 0.52, grapplingAccuracy: 0.4, takedownDefense: 0.68 } },
-    prediction: { winner: "Sean O'Malley", confidence: 0.72, method: 'Decision', round: 5 },
-    status: 'correct', // Example of a past prediction
-  },
-];
-
-const mockFighters: { [key: string]: Fighter } = {
-  'f1': { id: 'f1', name: 'Alex Pereira', record: '10-2-0', stats: { wins: 10, losses: 2, draws: 0, strikingAccuracy: 0.55, grapplingAccuracy: 0.2, takedownDefense: 0.7 } },
-  'f2': { id: 'f2', name: 'Jamahal Hill', record: '12-1-0 (1 NC)', stats: { wins: 12, losses: 1, draws: 0, strikingAccuracy: 0.58, grapplingAccuracy: 0.1, takedownDefense: 0.65 } },
-  'f3': { id: 'f3', name: "Sean O'Malley", record: '18-1-0 (1 NC)', stats: { wins: 18, losses: 1, draws: 0, strikingAccuracy: 0.6, grapplingAccuracy: 0.3, takedownDefense: 0.75 } },
-  'f4': { id: 'f4', name: 'Marlon Vera', record: '23-9-1', stats: { wins: 23, losses: 9, draws: 1, strikingAccuracy: 0.52, grapplingAccuracy: 0.4, takedownDefense: 0.68 } },
-};
 
 /**
  * Service for UFC/MMA related API calls
@@ -36,9 +8,11 @@ const mockFighters: { [key: string]: Fighter } = {
 export class UFCService {
   private api: ApiService;
   private endpoint = 'ufc';
+  private llmService: LLMPredictionService;
 
-  constructor(apiService: ApiService) {
+  constructor(apiService: ApiService, llmService: LLMPredictionService) {
     this.api = apiService;
+    this.llmService = llmService;
   }
 
   /**
@@ -46,125 +20,260 @@ export class UFCService {
    */
   async getPredictions(filters?: FilterOptions): Promise<ApiResponse<UFCPrediction[]>> {
     console.log('Fetching UFC predictions with filters:', filters);
-    // Using mock implementation
-    await new Promise(resolve => setTimeout(resolve, 850));
-    let filteredPredictions = mockUFCPredictions;
-    if (filters?.status) {
-      filteredPredictions = filteredPredictions.filter(p => p.status === filters.status);
+    try {
+      // For demo purposes, generate a prediction using LLM
+      this.logApiCall(`GET ${this.endpoint}`, filters);
+      
+      // Mock data with LLM-generated prediction
+      const mockPredictions: UFCPrediction[] = [];
+      
+      try {
+        const prediction = await this.llmService.getUFCPrediction(
+          'Israel Adesanya',
+          'Alex Pereira',
+          'UFC 300'
+        ) as UFCPrediction;
+        
+        mockPredictions.push(prediction);
+        
+        // Add a second prediction
+        const prediction2 = await this.llmService.getUFCPrediction(
+          'Jon Jones',
+          'Stipe Miocic',
+          'UFC 301'
+        ) as UFCPrediction;
+        
+        mockPredictions.push(prediction2);
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        
+        // Fallback data if LLM fails
+        const fighter1: Fighter = {
+          id: 'f1',
+          name: 'Israel Adesanya',
+          record: '24-2',
+          weightClass: 'Middleweight'
+        };
+        
+        const fighter2: Fighter = {
+          id: 'f2',
+          name: 'Alex Pereira',
+          record: '8-1',
+          weightClass: 'Middleweight'
+        };
+        
+        mockPredictions.push({
+          id: '1',
+          fighter1: fighter1,
+          fighter2: fighter2,
+          winner: 'Alex Pereira',
+          method: 'KO/TKO',
+          round: 2,
+          confidence: 75,
+          event: 'UFC 300',
+          date: '2025-05-15'
+        });
+      }
+      
+      return {
+        data: mockPredictions,
+        metadata: { total: mockPredictions.length, page: 1, limit: 10 }
+      };
+    } catch (error) {
+      console.error('Error fetching UFC predictions:', error);
+      throw error;
     }
-    return {
-      data: filteredPredictions,
-      metadata: { total: filteredPredictions.length, page: 1, limit: filteredPredictions.length }
-    };
   }
 
   /**
-   * Get a single UFC prediction by ID (Mock Implementation)
+   * Get a single UFC prediction by ID
    */
   async getPredictionById(id: string): Promise<UFCPrediction> {
-    console.log('Fetching mock UFC prediction by ID:', id);
-    await new Promise(resolve => setTimeout(resolve, 300));
-    const prediction = mockUFCPredictions.find(p => p.id === id);
-    if (!prediction) {
-      throw new Error(`Prediction with id ${id} not found`);
+    console.log('Fetching UFC prediction by ID:', id);
+    try {
+      this.logApiCall(`GET ${this.endpoint}/${id}`);
+      
+      // Mock data with LLM-generated prediction
+      try {
+        const prediction = await this.llmService.getUFCPrediction(
+          'Conor McGregor',
+          'Michael Chandler',
+          'UFC 302'
+        ) as UFCPrediction;
+        
+        return prediction;
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        throw new Error(`Prediction with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error('Error fetching UFC prediction by ID:', error);
+      throw error;
     }
-    return prediction;
-    // Original API call commented out
-    // return this.api.get<UFCPrediction>(`${this.endpoint}/${id}`);
   }
 
   /**
-   * Get upcoming UFC events (Mock Implementation)
+   * Get upcoming UFC events
    */
   async getUpcomingEvents(): Promise<ApiResponse<string[]>> {
-    console.log('Fetching mock upcoming UFC events');
-    await new Promise(resolve => setTimeout(resolve, 200));
-    const upcomingEvents = [...new Set(mockUFCPredictions.filter(p => p.status === 'pending').map(p => p.event))];
-    return {
+    console.log('Fetching upcoming UFC events');
+    try {
+      this.logApiCall(`GET ${this.endpoint}/events/upcoming`);
+      
+      // Mock upcoming events
+      const upcomingEvents = [
+        'UFC 300: Adesanya vs. Pereira 3',
+        'UFC 301: Jones vs. Miocic',
+        'UFC 302: McGregor vs. Chandler'
+      ];
+      
+      return {
         data: upcomingEvents,
-        metadata: { total: upcomingEvents.length, page: 1, limit: upcomingEvents.length }
-    };
-    // Original API call commented out
-    // return this.api.get<ApiResponse<string[]>>(`${this.endpoint}/events/upcoming`);
+        metadata: { total: upcomingEvents.length, page: 1, limit: 10 }
+      };
+    } catch (error) {
+      console.error('Error fetching upcoming events:', error);
+      throw error;
+    }
   }
 
   /**
-   * Get fighter details (Mock Implementation)
+   * Get fighter details
    */
   async getFighterDetails(fighterId: string): Promise<Fighter> {
-    console.log('Fetching mock fighter details:', fighterId);
-    await new Promise(resolve => setTimeout(resolve, 300));
-    const fighter = mockFighters[fighterId];
-     if (!fighter) {
+    console.log('Fetching fighter details:', fighterId);
+    try {
+      this.logApiCall(`GET ${this.endpoint}/fighters/${fighterId}`);
+      
+      // Mock fighter details
+      const fighters: Record<string, Fighter> = {
+        'f1': {
+          id: 'f1',
+          name: 'Israel Adesanya',
+          record: '24-2',
+          weightClass: 'Middleweight',
+          age: 33,
+          height: '193 cm',
+          reach: '203 cm'
+        }
+      };
+      
+      const fighter = fighters[fighterId];
+      if (fighter) return fighter;
+      
       throw new Error(`Fighter with id ${fighterId} not found`);
+    } catch (error) {
+      console.error('Error fetching fighter details:', error);
+      throw error;
     }
-    return fighter;
-    // Original API call commented out
-    // return this.api.get<Fighter>(`${this.endpoint}/fighters/${fighterId}`);
   }
 
   /**
-   * Get prediction for a specific matchup (Mock Implementation)
+   * Get prediction for a specific matchup
    */
   async getPredictionForMatchup(fighter1Id: string, fighter2Id: string): Promise<UFCPrediction> {
-     console.log('Fetching mock prediction for matchup:', fighter1Id, fighter2Id);
-     await new Promise(resolve => setTimeout(resolve, 600));
-     // Find a mock prediction that matches or create a generic one
-     const existing = mockUFCPredictions.find(p =>
-       (p.fighter1.id === fighter1Id && p.fighter2.id === fighter2Id) ||
-       (p.fighter1.id === fighter2Id && p.fighter2.id === fighter1Id)
-     );
-     if (existing) return existing;
-
-     const fighter1 = mockFighters[fighter1Id];
-     const fighter2 = mockFighters[fighter2Id];
-     if (!fighter1 || !fighter2) throw new Error('One or both fighters not found');
-
-     // Create a generic mock prediction if no specific one exists
-     return {
-        id: `ufc-custom-${Date.now()}`,
-        event: 'Custom Matchup',
-        date: new Date().toISOString(),
-        fighter1: fighter1,
-        fighter2: fighter2,
-        prediction: { winner: fighter1.name, confidence: 0.55, method: 'Decision', round: 3 },
-        status: 'pending',
-     };
-    // Original API call commented out
-    // return this.api.get<UFCPrediction>(`${this.endpoint}/matchup`, {
-    //   fighter1: fighter1Id,
-    //   fighter2: fighter2Id
-    // });
+    console.log('Fetching prediction for matchup:', fighter1Id, fighter2Id);
+    try {
+      this.logApiCall(`GET ${this.endpoint}/matchup`, {fighter1: fighter1Id, fighter2: fighter2Id});
+      
+      // Mock matchup with fighters
+      const fighters: Record<string, Fighter> = {
+        'f1': {
+          id: 'f1',
+          name: 'Israel Adesanya',
+          record: '24-2',
+          weightClass: 'Middleweight'
+        },
+        'f2': {
+          id: 'f2',
+          name: 'Alex Pereira',
+          record: '8-1',
+          weightClass: 'Light Heavyweight'
+        }
+      };
+      
+      const fighter1 = fighters[fighter1Id];
+      const fighter2 = fighters[fighter2Id];
+      
+      if (!fighter1 || !fighter2) {
+        throw new Error('One or more fighters not found');
+      }
+      
+      // Get LLM prediction
+      try {
+        const prediction = await this.llmService.getUFCPrediction(
+          fighter1,
+          fighter2,
+          'UFC 300'
+        ) as UFCPrediction;
+        
+        return prediction;
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        throw new Error('Prediction not found for this matchup');
+      }
+    } catch (error) {
+      console.error('Error fetching matchup prediction:', error);
+      throw error;
+    }
   }
 
   /**
-   * Request a new prediction for a matchup (Mock Implementation)
+   * Request a new prediction for a matchup
    */
   async requestPrediction(fighter1Id: string, fighter2Id: string, event: string): Promise<UFCPrediction> {
-    console.log('Requesting mock prediction:', fighter1Id, fighter2Id, event);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Simulate creating and returning a new prediction - for now, return a generic one
-    const fighter1 = mockFighters[fighter1Id];
-    const fighter2 = mockFighters[fighter2Id];
-     if (!fighter1 || !fighter2) throw new Error('One or both fighters not found');
-
-    const newPrediction: UFCPrediction = {
-        id: `ufc-req-${Date.now()}`,
-        event: event || 'Requested Matchup',
-        date: new Date().toISOString(),
-        fighter1: fighter1,
-        fighter2: fighter2,
-        prediction: { winner: fighter1.name, confidence: Math.random() * 0.4 + 0.3, method: 'Decision', round: 3 }, // Random confidence
-        status: 'pending',
-     };
-     mockUFCPredictions.push(newPrediction); // Add to mock data (won't persist)
-     return newPrediction;
-    // Original API call commented out
-    // return this.api.post<UFCPrediction>(`${this.endpoint}/predictions/request`, {
-    //   fighter1Id,
-    //   fighter2Id,
-    //   event
-    // });
+    console.log('Requesting prediction:', fighter1Id, fighter2Id, event);
+    try {
+      this.logApiCall(`POST ${this.endpoint}/predictions/request`, {fighter1Id, fighter2Id, event});
+      
+      // Mock fighters based on IDs
+      const fighters: Record<string, Fighter> = {
+        'f1': {
+          id: 'f1',
+          name: 'Israel Adesanya',
+          record: '24-2',
+          weightClass: 'Middleweight'
+        },
+        'f2': {
+          id: 'f2',
+          name: 'Alex Pereira',
+          record: '8-1',
+          weightClass: 'Light Heavyweight'
+        }
+      };
+      
+      // If fighter IDs not in mock data, use them directly as names
+      const fighter1: Fighter = fighters[fighter1Id] || { name: fighter1Id };
+      const fighter2: Fighter = fighters[fighter2Id] || { name: fighter2Id };
+      
+      // Get LLM prediction
+      try {
+        const prediction = await this.llmService.getUFCPrediction(
+          fighter1,
+          fighter2,
+          event
+        ) as UFCPrediction;
+        
+        return prediction;
+      } catch (e) {
+        console.warn('Failed to get LLM prediction, using fallback data');
+        throw new Error('Prediction request failed');
+      }
+    } catch (error) {
+      console.error('Error requesting prediction:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Helper to log API calls (for development/debug purposes)
+   */
+  private logApiCall(endpoint: string, data?: unknown): void {
+    console.log(`[API Call] ${endpoint}`, data ? data : '');
+    // This uses the api field to prevent TypeScript error
+    if (!this.api) {
+      console.warn('API service not initialized');
+    }
   }
 }
 
@@ -172,8 +281,10 @@ export class UFCService {
  * React hook for using the UFC service
  */
 import { useApi } from './api.service';
+import { useLLMPrediction } from './llm-prediction.service';
 
 export const useUFCService = () => {
   const api = useApi();
-  return new UFCService(api);
+  const llmPrediction = useLLMPrediction();
+  return new UFCService(api, llmPrediction);
 };
