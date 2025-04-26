@@ -9,7 +9,13 @@ const NotFound: React.FC = () => {
     <div className="not-found">
       <div className="digital-background"></div>
 
-      <VideoBackground videoSrc={''} />
+      {/* Use proper fallback gradient instead of empty video source */}
+      <VideoBackground 
+        videoSrc={''} 
+        fallbackImageSrc="/zen/digital-background.jpg" 
+        overlayOpacity={0.7}
+        blurAmount={2}
+      />
 
       <motion.div 
         className="not-found-content"

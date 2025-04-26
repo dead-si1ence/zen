@@ -1,0 +1,53 @@
+
+> zen@0.1.0 build
+> tsc -b && vite build
+
+src/App.tsx(2,10): error TS6133: 'lazy' is declared but its value is never read.
+src/pages/EsportsPage.tsx(42,10): error TS6133: 'selectedPrediction' is declared but its value is never read.
+src/pages/FootballPage.tsx(12,20): error TS6133: 'FiSearch' is declared but its value is never read.
+src/pages/FootballPage.tsx(37,7): error TS6133: 'bounceAnimation' is declared but its value is never read.
+src/pages/FootballPage.tsx(68,10): error TS6133: 'selectedPrediction' is declared but its value is never read.
+src/pages/FootballPage.tsx(170,9): error TS6133: 'handleFilterChange' is declared but its value is never read.
+src/pages/Formula1Page.tsx(18,10): error TS6133: 'selectedPrediction' is declared but its value is never read.
+src/pages/Formula1Page.tsx(19,10): error TS6133: 'selectedDriver' is declared but its value is never read.
+src/pages/Formula1Page.tsx(20,10): error TS6133: 'selectedConstructor' is declared but its value is never read.
+src/pages/Formula1Page.tsx(256,41): error TS2339: Property 'image' does not exist on type 'Constructor'.
+src/pages/Formula1Page.tsx(258,43): error TS2339: Property 'points' does not exist on type 'Constructor'.
+src/pages/UFCPage.tsx(293,9): error TS6133: 'isMobile' is declared but its value is never read.
+src/pages/UFCPage.tsx(305,10): error TS6133: 'dummyData' is declared but its value is never read.
+src/routes.tsx(16,13): error TS2339: Property 'displayName' does not exist on type 'LazyExoticComponent<ComponentType<any>>'.
+src/services/esports.service.ts(29,78): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/esports.service.ts(30,78): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/esports.service.ts(31,79): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/esports.service.ts(32,83): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/esports.service.ts(47,11): error TS6133: 'api' is declared but its value is never read.
+src/services/esports.service.ts(48,11): error TS6133: 'endpoint' is declared but its value is never read.
+src/services/football.service.ts(27,87): error TS2322: Type 'string' is not assignable to type 'string[]'.
+src/services/football.service.ts(28,88): error TS2322: Type 'string' is not assignable to type 'string[]'.
+src/services/football.service.ts(29,80): error TS2322: Type 'string' is not assignable to type 'string[]'.
+src/services/football.service.ts(30,84): error TS2322: Type 'string' is not assignable to type 'string[]'.
+src/services/football.service.ts(39,11): error TS6133: 'api' is declared but its value is never read.
+src/services/football.service.ts(40,11): error TS6133: 'endpoint' is declared but its value is never read.
+src/services/formula1.service.ts(11,7): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(13,9): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(14,9): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(15,9): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(17,7): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(27,7): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(29,9): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(30,9): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(31,9): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(33,7): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; }' but required in type 'Driver'.
+src/services/formula1.service.ts(41,3): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; stats: { poles: number; wins: number; }; }' but required in type 'Driver'.
+src/services/formula1.service.ts(42,3): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; stats: { poles: number; wins: number; }; }' but required in type 'Driver'.
+src/services/formula1.service.ts(43,3): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; stats: { poles: number; wins: number; }; }' but required in type 'Driver'.
+src/services/formula1.service.ts(44,3): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; stats: { poles: number; wins: number; }; }' but required in type 'Driver'.
+src/services/formula1.service.ts(45,3): error TS2741: Property 'number' is missing in type '{ id: string; name: string; team: string; image: string; stats: { poles: number; wins: number; }; }' but required in type 'Driver'.
+src/services/formula1.service.ts(49,40): error TS2353: Object literal may only specify known properties, and 'image' does not exist in type 'Constructor'.
+src/services/formula1.service.ts(50,32): error TS2353: Object literal may only specify known properties, and 'image' does not exist in type 'Constructor'.
+src/services/formula1.service.ts(51,32): error TS2353: Object literal may only specify known properties, and 'image' does not exist in type 'Constructor'.
+src/services/formula1.service.ts(52,33): error TS2353: Object literal may only specify known properties, and 'image' does not exist in type 'Constructor'.
+src/services/formula1.service.ts(59,11): error TS6133: 'api' is declared but its value is never read.
+src/services/formula1.service.ts(60,11): error TS6133: 'endpoint' is declared but its value is never read.
+src/services/ufc.service.ts(37,11): error TS6133: 'api' is declared but its value is never read.
+src/services/ufc.service.ts(38,11): error TS6133: 'endpoint' is declared but its value is never read.

@@ -1,0 +1,326 @@
+/* Formula 1 Page Specific Styles */
+
+/* F1 Prediction Card styles */
+.f1-prediction-card {
+  background: rgba(20, 20, 22, 0.8);
+  border-top: 3px solid #FF0000;
+}
+
+.f1-prediction-card .prediction-card-header {
+  background: linear-gradient(90deg, rgba(255, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+
+.f1-race {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+  gap: var(--spacing-lg);
+}
+
+.race-info {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.race-track {
+  width: 120px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.race-track img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--primary-accent-transparent);
+}
+
+.circuit-name {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.race-details {
+  flex: 1;
+}
+
+.race-details p {
+  margin: var(--spacing-xs) 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.race-details strong {
+  color: var(--text);
+}
+
+/* Podium predictions */
+.podium-predictions {
+  border-top: 1px dashed var(--primary-accent-transparent);
+  padding-top: var(--spacing-md);
+}
+
+.podium-predictions h4 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+  color: var(--text);
+  font-size: var(--font-size-md);
+  text-align: center;
+}
+
+.podium-positions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.podium-position {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm);
+  position: relative;
+}
+
+.position-1 {
+  transform: translateY(-5px);
+  border-top: 2px solid gold;
+}
+
+.position-2 {
+  transform: translateY(5px);
+  border-top: 2px solid silver;
+}
+
+.position-3 {
+  transform: translateY(10px);
+  border-top: 2px solid #cd7f32; /* bronze */
+}
+
+.position-number {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--background);
+  border: 1px solid var(--primary-accent-transparent);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  color: var(--text);
+}
+
+.position-1 .position-number {
+  color: gold;
+  border-color: gold;
+}
+
+.position-2 .position-number {
+  color: silver;
+  border-color: silver;
+}
+
+.position-3 .position-number {
+  color: #cd7f32;
+  border-color: #cd7f32;
+}
+
+.driver-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.team-color {
+  width: 8px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.driver-name {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  margin-top: var(--spacing-xs);
+}
+
+.team-name {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+/* F1 prediction details */
+.f1-prediction-details {
+  padding: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px dashed var(--primary-accent-transparent);
+}
+
+.f1-prediction-details h4 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text);
+  font-size: var(--font-size-md);
+}
+
+.f1-prediction-details ul {
+  margin: var(--spacing-sm) 0;
+  padding-left: 20px;
+}
+
+.f1-prediction-details li {
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.prediction-explanation {
+  font-style: italic;
+  margin-top: var(--spacing-md) !important;
+  padding-top: var(--spacing-sm);
+  border-top: 1px dotted var(--primary-accent-transparent);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+/* Championship standings styles */
+.standings-container {
+  padding: var(--spacing-md);
+}
+
+.standings-tabs {
+  display: flex;
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--primary-accent-transparent);
+}
+
+.standings-tab {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  transition: all var(--transition-fast);
+}
+
+.standings-tab.active {
+  color: var(--text);
+  border-bottom: 2px solid var(--secondary-accent);
+}
+
+.standings-tab:hover:not(.active) {
+  color: var(--text);
+  background-color: rgba(187, 134, 252, 0.05);
+}
+
+.standings-table-container {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  overflow-x: auto;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.standings-table th {
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--primary-accent-transparent);
+}
+
+.standings-table td {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid rgba(187, 134, 252, 0.1);
+  color: var(--text);
+}
+
+.standings-table tr:hover td {
+  background-color: rgba(187, 134, 252, 0.05);
+}
+
+.standings-table .driver-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.standings-table .team-color {
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.standings-updated, .data-source {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.data-source {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .race-info {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .race-track {
+    width: 100px;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .standings-table th,
+  .standings-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+  
+  .podium-positions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .position-1, .position-2, .position-3 {
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .race-track {
+    width: 80px;
+  }
+  
+  .driver-name, .team-name {
+    font-size: var(--font-size-xs);
+  }
+  
+  .standings-table th,
+  .standings-table td {
+    font-size: var(--font-size-xs);
+  }
+}

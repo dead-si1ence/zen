@@ -26,6 +26,11 @@ ZEN is an AI-powered sports prediction platform designed to deliver accurate and
 - Responsive design works across all devices
 - Sport-specific pages for UFC/MMA, Formula 1, Football, and Esports
 - Custom 404 page for better user experience
+- Enhanced error handling with network & timeout detection
+- Improved async operations with retry capabilities
+- Advanced video background system with adaptive quality
+- Comprehensive accessibility features
+- iOS and mobile device optimizations
 
 ### 📝 TODO List
 - AI prediction model integration
@@ -49,6 +54,12 @@ ZEN is an AI-powered sports prediction platform designed to deliver accurate and
 - Web Services: Go (planned)
 - Desktop Services: Rust (planned)
 - Machine Learning Services: Python (Artificial Neural Networks) (planned)
+
+### Core Components:
+- **API Layer**: Robust error handling and automatic retries
+- **Async Operations**: Debouncing, cancellation, and retry logic
+- **Video System**: Adaptive quality based on network and device
+- **Error Handling**: Network detection and graceful recovery
 
 ### Deployment Strategy:
 - Initial Phase: GitHub Pages for static content hosting
@@ -156,13 +167,15 @@ zen/
     ├── main.tsx
     ├── vite-env.d.ts
     ├── assets/
-    │   ├── react.svg
     │   ├── images/
     │   │   ├── esports-icon.svg
     │   │   ├── f1-icon.svg
     │   │   ├── football-icon.svg
-    │   │   └── ufc-icon.svg
+    │   │   ├── ufc-icon.svg
+    │   │   └── zen-logo.svg
     │   └── videos/
+    │       ├── ufc-background.mp4
+    │       └── video-background.mp4
     ├── components/
     │   ├── common/
     │   │   └── VideoBackground.tsx
@@ -170,6 +183,15 @@ zen/
     │   │   ├── Header.tsx
     │   │   └── Layout.tsx
     │   └── sports/
+    │       ├── EsportsPredictionCard.tsx
+    │       ├── FootballPredictionCard.tsx
+    │       ├── Formula1PredictionCard.tsx
+    │       ├── PredictionCard.css
+    │       ├── SportPage.tsx
+    │       └── UFCPredictionCard.tsx
+    ├── hooks/
+    │   ├── useAsync.ts
+    │   └── useMediaQuery.ts
     ├── pages/
     │   ├── EsportsPage.tsx
     │   ├── FootballPage.tsx
@@ -177,18 +199,40 @@ zen/
     │   ├── Home.tsx
     │   ├── NotFound.tsx
     │   └── UFCPage.tsx
-    └── styles/
-        ├── Header.css
-        ├── Home.css
-        ├── Layout.css
-        ├── NotFound.css
-        ├── SportPage.css
-        └── VideoBackground.css
+    ├── services/
+    │   ├── api.service.ts
+    │   ├── esports.service.ts
+    │   ├── football.service.ts
+    │   ├── formula1.service.ts
+    │   └── ufc.service.ts
+    ├── styles/
+    │   ├── Formula1Page.css
+    │   ├── Header.css
+    │   ├── Home.css
+    │   ├── Layout.css
+    │   ├── NotFound.css
+    │   ├── SportPage.css
+    │   ├── UFCPage.css
+    │   └── VideoBackground.css
+    ├── types/
+    │   └── models.ts
+    └── utils/
+        └── helpers.ts
 ```
 
 ## 📄 Documentation
 
 For full documentation on system architecture, API integration details, machine learning model implementation, and UI/UX design strategy, please refer to the [DOCUMENTATION.md](./DOCUMENTATION.md) file.
+
+## 🛠️ Recent Improvements
+
+- **Enhanced Error Handling**: Added network detection and timeout handling with appropriate user feedback
+- **Improved Async Operations**: Implemented retry mechanisms, cancellation on component unmount, and debounce support
+- **Video Background Optimizations**: Network-aware quality adjustments, iOS compatibility, and battery awareness
+- **UI Enhancements**: Better error states, loading indicators, and modal interactions
+- **Bug Fixes**: Addressed empty video source issues and improved fallback systems
+- **Accessibility**: Enhanced keyboard navigation and screen reader support
+- **Documentation**: Comprehensive technical documentation with development guidelines
 
 ## 📜 License
 

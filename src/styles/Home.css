@@ -128,310 +128,317 @@
     0 0 20px rgba(3, 218, 198, 0.2);
 }
 
-/* Home Content */
+/* Home Page Styles */
 .home-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
-  align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 2; /* Ensure content is above video overlay */
-}
-
-/* ZEN Logo styling */
-.zen-logo {
-  position: absolute;
-  top: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 3.5rem;
-  font-weight: 800;
-  letter-spacing: 0.5rem;
-  z-index: 10; /* Ensure logo is on top of everything */
-  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6)); /* Add shadow for better visibility */
-}
-
-.zen-logo .primary {
-  color: var(--primary-accent);
-  text-shadow: 0 0 20px rgba(187, 134, 252, 0.6);
-}
-
-.zen-logo .secondary {
-  color: var(--secondary-accent);
-  text-shadow: 0 0 20px rgba(3, 218, 198, 0.6);
-}
-
-/* Hero content styling */
-.hero-content {
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-lg);
   text-align: center;
-  max-width: 800px;
-  padding: 2rem;
-  margin-top: 3rem; /* Add margin to avoid overlap with logo */
 }
 
-.hero-content h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+/* ZEN Logo Styling */
+.zen-logo {
+  position: relative;
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: 0.5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo-z, .logo-n {
+  background: linear-gradient(to bottom right, var(--primary-accent), var(--primary-accent-light));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8));
 }
 
-.hero-content p {
-  font-size: 1.3rem;
-  margin-bottom: 2.5rem;
+.logo-e {
+  background: linear-gradient(to bottom right, var(--secondary-accent), var(--secondary-accent-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.logo-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(187, 134, 252, 0.3) 0%,
+    rgba(3, 218, 198, 0.2) 50%,
+    transparent 70%
+  );
+  filter: blur(15px);
+  opacity: 0.6;
+  z-index: -1;
+  border-radius: 50%;
+  animation: pulsate 4s infinite alternate;
+}
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Hero Content */
+.hero-content {
+  max-width: 800px;
+  margin-bottom: var(--spacing-xxl);
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: var(--font-size-h1);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text);
+}
+
+.hero-subtitle {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
 }
 
+/* CTA Button */
 .cta-button {
+  margin-top: var(--spacing-lg);
+  position: relative;
   display: inline-block;
-  background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
-  border-radius: 30px;
-  padding: 0.2rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
 }
 
 .cta-button a {
-  display: block;
-  background-color: var(--background);
-  color: var(--text);
-  padding: 1rem 2.5rem;
-  border-radius: 28px;
-  font-size: 1.2rem;
+  display: inline-block;
+  background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+  color: var(--background);
+  font-size: var(--font-size-lg);
+  padding: 0.8em 2em;
+  border-radius: var(--border-radius-lg);
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.cta-button:hover a {
-  background-color: rgba(18, 18, 18, 0.8);
-}
-
-/* Sports Grid Section */
-.sports-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  margin-top: 3rem;
-  max-width: 1000px;
-  width: 100%;
-  padding: 0 2rem;
-}
-
-.sport-card {
-  background-color: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  padding: 2rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(187, 134, 252, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.sport-card::before {
+.cta-button a:hover {
+  color: var(--text);
+}
+
+.cta-button a::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at top right, rgba(3, 218, 198, 0.1), transparent 70%);
+  background: linear-gradient(45deg, var(--secondary-accent-transparent), var(--primary-accent-transparent));
   opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.sport-card:hover::before {
-  opacity: 1;
-}
-
-.sport-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 
-    0 10px 20px rgba(0, 0, 0, 0.2),
-    0 0 15px rgba(187, 134, 252, 0.15);
-  background-color: rgba(187, 134, 252, 0.05);
-}
-
-.sport-icon {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 1.5rem;
-  filter: drop-shadow(0 0 8px rgba(3, 218, 198, 0.4));
-  transition: transform 0.3s ease;
-}
-
-.sport-card:hover .sport-icon {
-  transform: scale(1.1);
-}
-
-.sport-card h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: var(--primary-accent);
-  text-align: center;
-}
-
-.sport-card p {
-  margin-bottom: 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-  line-height: 1.6;
-}
-
-.sport-card a {
-  display: inline-block;
-  font-weight: 500;
-  color: var(--secondary-accent);
-  position: relative;
-  padding: 0.5rem 0;
-  margin-top: auto;
-  transition: all 0.3s ease;
-}
-
-.sport-card a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.4s ease;
-}
-
-.sport-card a:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
-/* About Section */
-.about-section {
-  padding: 3rem 2rem;
-  border-radius: 12px;
-  margin: 4rem 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.about-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    linear-gradient(135deg, rgba(187, 134, 252, 0.05) 0%, transparent 100%),
-    linear-gradient(45deg, transparent 0%, rgba(3, 218, 198, 0.05) 100%);
+  transform: translateY(100%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: -1;
 }
 
-.glow-container {
-  background-color: rgba(255, 255, 255, 0.03);
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 
-    0 0 20px rgba(187, 134, 252, 0.1),
-    0 0 40px rgba(3, 218, 198, 0.05);
-  border: 1px solid rgba(187, 134, 252, 0.1);
+.cta-button a:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sports Grid */
+.sports-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-xl);
+  width: 100%;
+  max-width: 1200px;
+  margin-top: var(--spacing-lg);
+}
+
+.sports-grid.mobile {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
+/* Sport Category Cards */
+.sport-category {
+  background: rgba(30, 30, 30, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--primary-accent-transparent);
+  transition: all var(--transition-medium);
+  overflow: hidden;
+}
+
+.sport-category a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+}
+
+.sport-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: var(--spacing-md);
   position: relative;
 }
 
-.about-section h2 {
-  margin-top: 0;
-  color: var(--primary-accent);
-  font-size: 2.2rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
+.sport-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
 }
 
-.about-section p {
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.1rem;
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
+.sport-category:hover .sport-icon {
+  filter: drop-shadow(0 4px 12px rgba(3, 218, 198, 0.5));
 }
 
-/* Firefox specific optimizations */
-@supports (-moz-appearance: none) {
-  .hero-content h1 {
-    text-shadow: 0 0 10px rgba(187, 134, 252, 0.5); /* Fallback for Firefox gradient text */
-  }
-  
-  .sport-card, .cta-button {
-    will-change: transform;
-  }
-  
-  .sport-icon {
-    transform: translateZ(0); /* Force hardware acceleration in Firefox */
-    backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-  }
-  
-  .zen-logo {
-    /* Firefox specific enhancements for logo */
-    transform: translateX(-50%) translateZ(0);
+/* Sport icon colors */
+.sport-category:nth-child(1) .sport-icon {
+  filter: drop-shadow(0 0 8px rgba(3, 218, 198, 0.4));
+}
+
+.sport-category:nth-child(2) .sport-icon {
+  filter: drop-shadow(0 0 8px rgba(187, 134, 252, 0.4));
+}
+
+.sport-category:nth-child(3) .sport-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.4));
+}
+
+.sport-category:nth-child(4) .sport-icon {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.4));
+}
+
+.sport-category h3 {
+  color: var(--text);
+  font-size: var(--font-size-lg);
+  margin: 0;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.sport-category:hover h3 {
+  color: var(--secondary-accent);
+}
+
+/* Home Footer */
+.home-footer {
+  margin-top: var(--spacing-xxl);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  opacity: 0.7;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 1200px) {
+  .sports-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
   }
 }
 
-/* Media queries for responsiveness */
 @media (max-width: 768px) {
-  .hero h1 {
+  .logo-text {
     font-size: 3.5rem;
   }
-
-  .hero h2 {
-    font-size: 1.5rem;
+  
+  .hero-title {
+    font-size: var(--font-size-h2);
+    margin-bottom: var(--spacing-md);
   }
-
-  .cta-buttons {
-    flex-direction: column;
-    align-items: center;
+  
+  .hero-subtitle {
+    font-size: var(--font-size-md);
+    margin-bottom: var(--spacing-lg);
   }
   
   .sports-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
   }
   
-  .about-section {
-    padding: 2rem 1rem;
+  .sport-icon-container {
+    width: 60px;
+    height: 60px;
   }
   
-  .hero-content h1 {
-    font-size: 2.5rem;
+  .sport-category h3 {
+    font-size: var(--font-size-md);
   }
   
-  .hero-content p {
-    font-size: 1.1rem;
-  }
-  
-  .zen-logo {
-    font-size: 2.5rem;
+  .home-footer {
+    margin-top: var(--spacing-xl);
   }
 }
 
 @media (max-width: 480px) {
+  .logo-text {
+    font-size: 2.5rem;
+    letter-spacing: 0.3rem;
+  }
+  
   .sports-grid {
     grid-template-columns: 1fr;
   }
   
-  .sport-card img {
-    width: 60px;
-    height: 60px;
+  .hero-content {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .cta-button a {
+    padding: 0.7em 1.5em;
+    font-size: var(--font-size-md);
+  }
+}
+
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+  .logo-glow {
+    animation: none;
+  }
+  
+  .cta-button a::before {
+    transition-property: opacity;
+    transition-duration: 0.1s;
   }
 }

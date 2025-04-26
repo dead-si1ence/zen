@@ -1,6 +1,10 @@
+/* App Level Styles */
 #root {
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* Add some custom scrollbar styles */
@@ -20,4 +24,164 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--secondary-accent);
+}
+
+/* Animations for page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Shared components styling */
+.zen-card {
+  background-color: var(--background-transparent);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--primary-accent-transparent);
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.zen-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Button variants */
+.btn-primary {
+  background-color: var(--primary-accent);
+  color: var(--background);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--secondary-accent);
+  border: 1px solid var(--secondary-accent);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-accent);
+  color: var(--background);
+}
+
+.btn-text {
+  background-color: transparent;
+  color: var(--text);
+  padding: 0.5em;
+  text-decoration: underline;
+}
+
+.btn-text:hover {
+  background-color: transparent;
+  color: var(--secondary-accent);
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-lg {
+  font-size: var(--font-size-lg);
+  padding: 0.8em 1.5em;
+}
+
+.btn-sm {
+  font-size: var(--font-size-sm);
+  padding: 0.4em 0.8em;
+}
+
+/* Custom gradient text effect */
+.gradient-text {
+  background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Focus styles for better accessibility */
+:focus-visible {
+  outline: 2px solid var(--secondary-accent);
+  outline-offset: 3px;
+}
+
+/* Custom toast notifications */
+.zen-toast {
+  background-color: var(--background-light);
+  color: var(--text);
+  border-left: 4px solid var(--primary-accent);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.zen-toast.success {
+  border-left-color: var(--success);
+}
+
+.zen-toast.error {
+  border-left-color: var(--error);
+}
+
+.zen-toast.warning {
+  border-left-color: var(--warning);
+}
+
+/* Loading spinner */
+.zen-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(187, 134, 252, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-accent);
+  animation: zen-spin 1s linear infinite;
+}
+
+@keyframes zen-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hidden-mobile { display: none; }
+}
+
+@media (min-width: 769px) {
+  .hidden-desktop { display: none; }
 }

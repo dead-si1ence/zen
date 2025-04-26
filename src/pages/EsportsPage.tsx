@@ -1,6 +1,16 @@
+import { useState, useEffect, useContext, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useEsportsService } from '../services/esports.service';
+import { useAsync } from '../hooks/useAsync';
+import { AppContext } from '../App';
+import { EsportsPrediction, FilterOptions } from '../types/models';
+import SportPage from '../components/sports/SportPage';
+import EsportsPredictionCard from '../components/sports/EsportsPredictionCard';
 import esportsIcon from '../assets/images/esports-icon.svg';
 import '../styles/SportPage.css';
+
+import { FiMonitor, FiAward, FiTrendingUp, FiFilter, FiInfo, FiWifi, FiClock } from 'react-icons/fi';
+import { getErrorMessage } from '../utils/helpers';
 
 // Animation variants
 const fadeIn = {
@@ -9,8 +19,8 @@ const fadeIn = {
     opacity: 1,
     y: 0,
     transition: { 
-      delay: custom * 0.2,
-      duration: 0.8,
+      delay: custom * 0.1,
+      duration: 0.5,
       ease: "easeOut"
     }
   })
@@ -21,340 +31,659 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2
+      staggerChildren: 0.1
     }
   }
 };
 
-// Keyboard typing animation for the esports theme
-const typingContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.06
-    }
-  }
-};
-
-const typingCharacter = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", damping: 12, stiffness: 200 }
+const tabVariants = {
+  active: {
+    color: 'var(--primary-accent)',
+    borderBottom: '2px solid var(--primary-accent)',
+    transition: { duration: 0.3 }
+  },
+  inactive: {
+    color: 'var(--text-secondary)',
+    borderBottom: '2px solid transparent',
+    transition: { duration: 0.3 }
   }
 };
 
 const EsportsPage = () => {
-  const title = "Esports Predictions";
+  const { setIsLoading } = useContext(AppContext);
+  const esportsService = useEsportsService();
+  const isMounted = useRef(true);
+
+  // State
+  const [activeTab, setActiveTab] = useState<'predictions' | 'games' | 'tournaments'>('predictions');
+  const [selectedPrediction, setSelectedPrediction] = useState<EsportsPrediction | null>(null);
+  const [filters, setFilters] = useState<FilterOptions>({});
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<string | null>(null);
+
+  // Set mounted ref on mount and cleanup on unmount
+  useEffect(() => {
+    isMounted.current = true;
+    console.log('EsportsPage mounted');
+    return () => {
+      isMounted.current = false;
+      setIsLoading(false);
+      console.log('EsportsPage unmounted');
+    };
+  }, [setIsLoading]);
+
+  const { 
+    execute: fetchPredictions, 
+    loading: loadingPredictions, 
+    error: errorPredictions, 
+    value: predictions,
+    isNetworkError: isPredictionsNetworkError,
+    isTimeoutError: isPredictionsTimeoutError,
+    retry: retryPredictions, 
+  } = useAsync<EsportsPrediction[]>(
+    async () => {
+      try {
+        console.log('Fetching esports predictions');
+        const response = await esportsService.getPredictions({ ...filters, status: 'pending' });
+        console.log('Esports predictions received:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching esports predictions:', error);
+        if (isMounted.current) setIsLoading(false);
+        throw error;
+      }
+    },
+    {
+      immediate: true, // Always fetch on mount
+      onSuccess: () => {
+        if (isMounted.current) {
+          setIsLoading(false);
+          console.log('Predictions loaded successfully');
+        }
+      },
+      onError: (err) => {
+        if (isMounted.current) {
+          setIsLoading(false);
+          console.error('Error in predictions hook:', err);
+        }
+      },
+      maxRetries: 2,
+      retryDelayMs: 2000
+    }
+  );
   
-  return (
-    <div className="sport-page esports-page">
+  const {
+    execute: fetchGames,
+    loading: loadingGames,
+    error: errorGames,
+    value: games,
+    isNetworkError: isGamesNetworkError,
+    isTimeoutError: isGamesTimeoutError,
+    retry: retryGames,
+  } = useAsync<string[]>(
+    async () => {
+      try {
+        console.log('Fetching esports games');
+        const response = await esportsService.getGames();
+        console.log('Esports games received:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching esports games:', error);
+        if (isMounted.current) setIsLoading(false);
+        throw error;
+      }
+    },
+    { 
+      immediate: false,
+      onSuccess: () => {
+        if (isMounted.current) {
+          setIsLoading(false);
+          console.log('Games loaded successfully');
+        }
+      },
+      onError: (err) => {
+        if (isMounted.current) {
+          setIsLoading(false);
+          console.error('Error in games hook:', err);
+        }
+      },
+      maxRetries: 2,
+      retryDelayMs: 2000
+    }
+  );
+  
+  const {
+    execute: fetchTournaments,
+    loading: loadingTournaments,
+    error: errorTournaments,
+    value: tournaments,
+    isNetworkError: isTournamentsNetworkError,
+    isTimeoutError: isTournamentsTimeoutError,
+    retry: retryTournaments,
+  } = useAsync<string[]>(
+    async (game: string) => {
+      try {
+        console.log('Fetching tournaments for game:', game);
+        const response = await esportsService.getTournaments(game);
+        console.log('Tournaments received:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching tournaments:', error);
+        if (isMounted.current) setIsLoading(false);
+        throw error;
+      }
+    },
+    { 
+      immediate: false,
+      onSuccess: () => {
+        if (isMounted.current) {
+          setIsLoading(false);
+          console.log('Tournaments loaded successfully');
+        }
+      },
+      onError: (err) => {
+        if (isMounted.current) {
+          setIsLoading(false);
+          console.error('Error in tournaments hook:', err);
+        }
+      },
+      maxRetries: 2,
+      retryDelayMs: 2000
+    }
+  );
+
+  const loading = loadingPredictions || loadingGames || 
+                 (activeTab === 'tournaments' && selectedGame && loadingTournaments);
+  
+  const currentError = activeTab === 'predictions' ? errorPredictions : 
+                      activeTab === 'games' ? errorGames : 
+                      errorTournaments;
+  
+  const isNetworkError = activeTab === 'predictions' ? isPredictionsNetworkError : 
+                          activeTab === 'games' ? isGamesNetworkError : 
+                          isTournamentsNetworkError;
+  
+  const isTimeoutError = activeTab === 'predictions' ? isPredictionsTimeoutError : 
+                          activeTab === 'games' ? isGamesTimeoutError : 
+                          isTournamentsTimeoutError;
+                 
+  const retryFunction = () => {
+    if (activeTab === 'predictions') {
+      retryPredictions();
+    } else if (activeTab === 'games') {
+      retryGames();
+    } else if (activeTab === 'tournaments' && selectedGame) {
+      retryTournaments(selectedGame);
+    }
+  };
+
+  useEffect(() => {
+    if (isMounted.current) {
+      setIsLoading(true);
+      
+      // Set a safety timeout to prevent infinite loading
+      const safetyTimeout = setTimeout(() => {
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
+      }, 1000); // 1 second backup timeout
+      
+      const fetchData = async () => {
+        try {
+          if (activeTab === 'predictions') {
+            await fetchPredictions();
+          } else if (activeTab === 'games') {
+            await fetchGames();
+          } else if (activeTab === 'tournaments') {
+            if (selectedGame) {
+              await fetchTournaments(selectedGame);
+            } else {
+              await fetchGames();
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching data for ${activeTab}:`, error);
+        } finally {
+          clearTimeout(safetyTimeout);
+          if (isMounted.current) {
+            setIsLoading(false);
+          }
+        }
+      };
+      
+      fetchData();
+      
+      return () => {
+        clearTimeout(safetyTimeout);
+        if (isMounted.current) setIsLoading(false);
+      };
+    }
+  }, [activeTab, filters, selectedGame, fetchPredictions, fetchGames, fetchTournaments]);
+
+  // Add debug logging to check if data is being received
+  console.log('EsportsPage - current data state:', {
+    predictions,
+    games,
+    tournaments,
+    loadingPredictions,
+    loadingGames,
+    loadingTournaments,
+    errorPredictions,
+    errorGames,
+    errorTournaments
+  });
+
+  const handlePredictionClick = (prediction: EsportsPrediction) => {
+    setSelectedPrediction(prediction);
+    console.log('Selected prediction:', prediction);
+  };
+
+  const handleFilterChange = (newFilters: Partial<FilterOptions>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
+  
+  const handleGameSelectForTournaments = (game: string) => {
+    setSelectedGame(game);
+    console.log('Selected game for tournaments:', game);
+  };
+
+  // Render error state with improved error message display
+  const renderErrorState = () => {
+    const errorMessage = getErrorMessage(currentError);
+    
+    return (
       <motion.div 
-        className="sport-header"
+        className="error-state"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        {isNetworkError ? (
+          <>
+            <FiWifi size={48} className="error-icon" />
+            <h3>Network Connection Error</h3>
+            <p>{errorMessage}</p>
+            <button onClick={retryFunction} className="retry-button">
+              Try Again
+            </button>
+          </>
+        ) : isTimeoutError ? (
+          <>
+            <FiClock size={48} className="error-icon" />
+            <h3>Request Timeout</h3>
+            <p>{errorMessage}</p>
+            <button onClick={retryFunction} className="retry-button">
+              Try Again
+            </button>
+          </>
+        ) : (
+          <>
+            <FiInfo size={48} className="error-icon" />
+            <h3>Something went wrong</h3>
+            <p>{errorMessage}</p>
+            <button onClick={retryFunction} className="retry-button">
+              Try Again
+            </button>
+          </>
+        )}
+      </motion.div>
+    );
+  };
+
+  const renderTabContent = () => {
+    // Show loading state only if data hasn't been loaded yet
+    if (loading) {
+      return (
+        <motion.div 
+          className="loading-state"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="zen-spinner"></div>
+          <p>Loading {activeTab}...</p>
+        </motion.div>
+      );
+    }
+    
+    if (currentError) {
+      return renderErrorState();
+    }
+
+    switch (activeTab) {
+      case 'predictions':
+        return (
+          <motion.div 
+            className="predictions-container" 
+            variants={staggerContainer} 
+            initial="hidden" 
+            animate="visible"
+          >
+            <motion.h2 variants={fadeIn} custom={0}>Esports Match Predictions</motion.h2>
+            
+            {predictions && predictions.length > 0 ? (
+              <motion.div className="prediction-grid">
+                {predictions.map((prediction, index) => (
+                  <motion.div key={prediction.id} variants={fadeIn} custom={index + 1}>
+                    <EsportsPredictionCard 
+                      prediction={prediction} 
+                      onClick={handlePredictionClick} 
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <div className="empty-state">
+                <FiInfo size={48} className="empty-state-icon" />
+                <h3>No upcoming match predictions</h3>
+                <p>Check back soon for new esports predictions.</p>
+              </div>
+            )}
+          </motion.div>
+        );
+      case 'games':
+        return (
+          <motion.div 
+            className="games-container"
+            variants={staggerContainer} 
+            initial="hidden" 
+            animate="visible"
+          >
+            <motion.h2 variants={fadeIn} custom={0}>Esports Games</motion.h2>
+            
+            {games && games.length > 0 ? (
+              <motion.div className="games-grid">
+                {games.map((game, index) => (
+                  <motion.div 
+                    key={game} 
+                    variants={fadeIn} 
+                    custom={index + 1}
+                    className="game-card"
+                    onClick={() => {
+                      setActiveTab('tournaments');
+                      handleGameSelectForTournaments(game);
+                    }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 8px 20px rgba(187, 134, 252, 0.2)' }}
+                  >
+                    <h3>{game}</h3>
+                    <p>View tournaments &rarr;</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <div className="empty-state">
+                <FiInfo size={48} className="empty-state-icon" />
+                <h3>No games available</h3>
+                <p>Check back soon for esports game data.</p>
+              </div>
+            )}
+          </motion.div>
+        );
+      case 'tournaments':
+        return (
+          <motion.div
+            className="tournaments-container"
+            variants={staggerContainer} 
+            initial="hidden" 
+            animate="visible"
+          >
+            {!selectedGame && games && (
+              <>
+                <motion.h2 variants={fadeIn} custom={0}>Select a Game</motion.h2>
+                <motion.div className="games-grid">
+                  {games.map((game, index) => (
+                    <motion.div 
+                      key={game} 
+                      variants={fadeIn} 
+                      custom={index + 1}
+                      className="game-card"
+                      onClick={() => handleGameSelectForTournaments(game)}
+                      whileHover={{ scale: 1.05, boxShadow: '0 8px 20px rgba(187, 134, 252, 0.2)' }}
+                    >
+                      <h3>{game}</h3>
+                      <p>View tournaments &rarr;</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </>
+            )}
+            
+            {selectedGame && !loadingTournaments && !errorTournaments && (
+              <>
+                <motion.div className="tournaments-header" variants={fadeIn} custom={0}>
+                  <h2>{selectedGame} Tournaments</h2>
+                  <button 
+                    className="back-button"
+                    onClick={() => setSelectedGame(null)}
+                  >
+                    &larr; Back to Games
+                  </button>
+                </motion.div>
+
+                {tournaments && tournaments.length > 0 ? (
+                  <motion.div className="tournaments-grid">
+                    {tournaments.map((tournament, index) => (
+                      <motion.div 
+                        key={tournament} 
+                        variants={fadeIn} 
+                        custom={index + 1}
+                        className="tournament-card"
+                        whileHover={{ scale: 1.03, boxShadow: '0 8px 20px rgba(3, 218, 198, 0.15)' }}
+                      >
+                        <h3>{tournament}</h3>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <div className="empty-state">
+                    <FiInfo size={48} className="empty-state-icon" />
+                    <h3>No tournaments found for {selectedGame}</h3>
+                    <p>Check back soon for tournament data.</p>
+                  </div>
+                )}
+              </>
+            )}
+          </motion.div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const content = (
+    <div className="sport-page-container">
+      <motion.div
+        className="hero-section"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
       >
-        <motion.img 
-          src={esportsIcon} 
-          alt="Esports" 
-          className="sport-page-icon"
-          variants={fadeIn}
-          custom={0}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ 
-            opacity: 1, 
-            scale: [0.5, 1.2, 1],
-            rotate: [0, 5, 0, -5, 0]
-          }}
-          transition={{ duration: 1.5 }}
+        <motion.img
+          src={esportsIcon}
+          alt="Esports Icon"
+          className="hero-icon"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20 }}
         />
-        
-        <motion.h1 variants={typingContainer} initial="hidden" animate="visible" className="typing-text">
-          {title.split('').map((char, index) => (
-            <motion.span key={`title-${index}`} variants={typingCharacter}>
-              {char}
-            </motion.span>
-          ))}
-        </motion.h1>
-        
+        <motion.h1 variants={fadeIn} custom={1}>Esports Predictions</motion.h1>
         <motion.p variants={fadeIn} custom={2}>
-          AI-driven match outcome predictions for major esports titles
+          Advanced AI predictions for your favorite esports games and tournaments
         </motion.p>
       </motion.div>
 
-      <motion.section 
-        className="api-sources"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
-      >
-        <motion.h2 
-          variants={fadeIn} 
-          custom={0}
-          className="glow-text"
-        >
-          Our Data Sources
-        </motion.h2>
-        <div className="api-cards">
-          <motion.div 
-            className="api-card"
-            variants={fadeIn}
-            custom={1}
-            whileHover={{ 
-              y: -5, 
-              boxShadow: '0 10px 25px rgba(187, 134, 252, 0.2)',
-              backgroundColor: 'rgba(187, 134, 252, 0.07)'
-            }}
-          >
-            <h3>PandaScore API</h3>
-            <p>Provides reliable and extensive statistics and odds for esports titles like LoL, CS2, and Dota 2, with in-play statistics and odds.</p>
-          </motion.div>
-          <motion.div 
-            className="api-card"
-            variants={fadeIn}
-            custom={2}
-            whileHover={{ 
-              y: -5, 
-              boxShadow: '0 10px 25px rgba(187, 134, 252, 0.2)',
-              backgroundColor: 'rgba(187, 134, 252, 0.07)'
-            }}
-          >
-            <h3>Abios Esports API</h3>
-            <p>Offers access to a large esports database with in-depth statistics, live scores, and more, covering over 15 games.</p>
-          </motion.div>
-          <motion.div 
-            className="api-card"
-            variants={fadeIn}
-            custom={3}
-            whileHover={{ 
-              y: -5, 
-              boxShadow: '0 10px 25px rgba(187, 134, 252, 0.2)',
-              backgroundColor: 'rgba(187, 134, 252, 0.07)'
-            }}
-          >
-            <h3>GameScorekeeper API</h3>
-            <p>Connects to various data sources to track the entire ecosystem of esports, including tournaments, matches, teams, and individual players.</p>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      <motion.section 
-        className="predictions-section"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
-      >
-        <motion.h2 
-          variants={fadeIn} 
-          custom={0}
-          className="glow-text"
-        >
-          Upcoming Match Predictions
-        </motion.h2>
-        <div className="prediction-cards">
-          <motion.div 
-            className="prediction-card esports-card"
-            variants={fadeIn}
-            custom={1}
-            whileHover={{ 
-              y: -5, 
-              boxShadow: '0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(3, 218, 198, 0.15)'
-            }}
-          >
-            <div className="esports-card-header">
-              <motion.span 
-                className="game-badge"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: [0.8, 1.1, 1] }}
-                transition={{ duration: 0.5 }}
-              >
-                CS2
-              </motion.span>
-            </div>
-
-            <div className="fighters">
-              <div className="fighter fighter-1">
-                <h3>Team Alpha</h3>
-                <p>League: CS2</p>
-                <motion.span 
-                  className="win-chance"
-                  whileHover={{ scale: 1.1 }}
-                  animate={{ 
-                    boxShadow: ['0 0 0 rgba(187, 134, 252, 0.2)', '0 0 15px rgba(187, 134, 252, 0.6)', '0 0 0 rgba(187, 134, 252, 0.2)'],
-                    transition: { duration: 2, repeat: Infinity }
-                  }}
-                >
-                  Win Chance: 59%
-                </motion.span>
-              </div>
-              
-              <motion.span 
-                className="versus"
-                initial={{ scale: 0.8, opacity: 0.5 }}
-                animate={{ 
-                  scale: [0.8, 1.1, 0.8], 
-                  opacity: [0.5, 1, 0.5],
-                  rotateY: [0, 180, 360],
-                  transition: { duration: 5, repeat: Infinity }
-                }}
-              >
-                VS
-              </motion.span>
-              
-              <div className="fighter fighter-2">
-                <h3>Team Beta</h3>
-                <p>League: CS2</p>
-                <motion.span 
-                  className="win-chance"
-                  whileHover={{ scale: 1.1 }}
-                  animate={{ 
-                    boxShadow: ['0 0 0 rgba(3, 218, 198, 0.2)', '0 0 15px rgba(3, 218, 198, 0.6)', '0 0 0 rgba(3, 218, 198, 0.2)'],
-                    transition: { duration: 2, repeat: Infinity }
-                  }}
-                >
-                  Win Chance: 41%
-                </motion.span>
-              </div>
-            </div>
-            
-            <div className="prediction-details esports-details">
-              <p className="event">ESL Pro League Season 24 • April 28, 2025</p>
-              <p className="prediction-summary">Our AI predicts Team Alpha to win 2-1 in a close best-of-three series</p>
-              <motion.div 
-                className="digital-grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 1 }}
-              ></motion.div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="prediction-card esports-card"
-            variants={fadeIn}
-            custom={2}
-            whileHover={{ 
-              y: -5, 
-              boxShadow: '0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(3, 218, 198, 0.15)'
-            }}
-          >
-            <div className="esports-card-header">
-              <motion.span 
-                className="game-badge lol"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: [0.8, 1.1, 1] }}
-                transition={{ duration: 0.5 }}
-              >
-                LoL
-              </motion.span>
-            </div>
-
-            <div className="fighters">
-              <div className="fighter fighter-1">
-                <h3>Team Dragon</h3>
-                <p>League: LoL</p>
-                <motion.span 
-                  className="win-chance"
-                  whileHover={{ scale: 1.1 }}
-                  animate={{ 
-                    boxShadow: ['0 0 0 rgba(187, 134, 252, 0.2)', '0 0 15px rgba(187, 134, 252, 0.6)', '0 0 0 rgba(187, 134, 252, 0.2)'],
-                    transition: { duration: 2, repeat: Infinity }
-                  }}
-                >
-                  Win Chance: 72%
-                </motion.span>
-              </div>
-              
-              <motion.span 
-                className="versus"
-                initial={{ scale: 0.8, opacity: 0.5 }}
-                animate={{ 
-                  scale: [0.8, 1.1, 0.8], 
-                  opacity: [0.5, 1, 0.5],
-                  rotateY: [0, 180, 360],
-                  transition: { duration: 5, repeat: Infinity }
-                }}
-              >
-                VS
-              </motion.span>
-              
-              <div className="fighter fighter-2">
-                <h3>Team Phoenix</h3>
-                <p>League: LoL</p>
-                <motion.span 
-                  className="win-chance"
-                  whileHover={{ scale: 1.1 }}
-                  animate={{ 
-                    boxShadow: ['0 0 0 rgba(3, 218, 198, 0.2)', '0 0 15px rgba(3, 218, 198, 0.6)', '0 0 0 rgba(3, 218, 198, 0.2)'],
-                    transition: { duration: 2, repeat: Infinity }
-                  }}
-                >
-                  Win Chance: 28%
-                </motion.span>
-              </div>
-            </div>
-            
-            <div className="prediction-details esports-details">
-              <p className="event">LCS Spring Split • May 1, 2025</p>
-              <p className="prediction-summary">Our AI predicts Team Dragon to win with superior objective control</p>
-              <motion.div 
-                className="digital-grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 1 }}
-              ></motion.div>
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
-      
-      <motion.div 
-        className="floating-particles"
+      <motion.div
+        className="sport-tabs"
         initial="hidden"
         animate="visible"
+        variants={staggerContainer}
       >
-        {[...Array(12)].map((_, index) => (
+        <motion.button
+          className={`sport-tab ${activeTab === 'predictions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('predictions')}
+          animate={activeTab === 'predictions' ? 'active' : 'inactive'}
+          variants={tabVariants}
+        >
+          <FiTrendingUp className="tab-icon" />
+          Predictions
+        </motion.button>
+        <motion.button
+          className={`sport-tab ${activeTab === 'games' ? 'active' : ''}`}
+          onClick={() => setActiveTab('games')}
+          animate={activeTab === 'games' ? 'active' : 'inactive'}
+          variants={tabVariants}
+        >
+          <FiMonitor className="tab-icon" />
+          Games
+        </motion.button>
+        <motion.button
+          className={`sport-tab ${activeTab === 'tournaments' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tournaments')}
+          animate={activeTab === 'tournaments' ? 'active' : 'inactive'}
+          variants={tabVariants}
+        >
+          <FiAward className="tab-icon" />
+          Tournaments
+        </motion.button>
+      </motion.div>
+
+      {/* Filter Controls - Only show on predictions tab and not during loading or error */}
+      {activeTab === 'predictions' && !loading && !currentError && (
+        <motion.div 
+          className={`filter-control-bar ${isFiltersOpen ? 'open' : ''}`}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <button 
+            className="filter-toggle"
+            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            aria-expanded={isFiltersOpen}
+          >
+            <FiFilter />
+            {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+          </button>
+          
+          {isFiltersOpen && (
+            <motion.div 
+              className="filter-controls"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <div className="filter-group">
+                <label htmlFor="search">Search:</label>
+                <input 
+                  id="search"
+                  type="text" 
+                  placeholder="Search game or team..."
+                  onChange={(e) => handleFilterChange({ searchTerm: e.target.value })}
+                />
+              </div>
+              
+              <div className="filter-group">
+                <label htmlFor="game">Game:</label>
+                <select 
+                  id="game"
+                  onChange={(e) => handleFilterChange({ game: e.target.value })}
+                >
+                  <option value="">All Games</option>
+                  <option value="league-of-legends">League of Legends</option>
+                  <option value="dota-2">Dota 2</option>
+                  <option value="cs2">CS2</option>
+                  <option value="valorant">Valorant</option>
+                </select>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+
+      <motion.section
+        className="tab-content-section"
+        key={activeTab + (selectedGame || '')}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {renderTabContent()}
+      </motion.section>
+
+      {/* Floating particles for visual effect */}
+      <motion.div className="floating-particles">
+        {[...Array(8)].map((_, index) => (
           <motion.div
             key={index}
-            className="particle digital-particle"
+            className="particle esports-particle"
             initial={{
               x: Math.random() * window.innerWidth,
               y: Math.random() * window.innerHeight,
-              scale: Math.random() * 0.3 + 0.2,
-              opacity: Math.random() * 0.4 + 0.1,
-              backgroundColor: index % 3 === 0 ? 'var(--primary-accent)' : 
-                              index % 3 === 1 ? 'var(--secondary-accent)' : '#ffffff'
+              scale: Math.random() * 0.3 + 0.1,
+              opacity: Math.random() * 0.3 + 0.1
             }}
             animate={{
               x: Math.random() * window.innerWidth,
               y: Math.random() * window.innerHeight,
-              opacity: [
-                Math.random() * 0.4 + 0.1,
-                Math.random() * 0.7 + 0.3,
-                Math.random() * 0.4 + 0.1
-              ],
               transition: {
-                duration: Math.random() * 8 + 12,
+                duration: Math.random() * 10 + 15,
                 repeat: Infinity,
-                repeatType: "reverse"
+                repeatType: "mirror"
               }
             }}
           />
         ))}
       </motion.div>
-      
-      <motion.div 
-        className="digital-overlay"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.05 }}
-        transition={{ duration: 2 }}
-      ></motion.div>
+
+      {/* Selected Prediction Modal */}
+      {selectedPrediction && (
+        <motion.div 
+          className="prediction-modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div 
+            className="prediction-modal"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+          >
+            <button className="close-modal" onClick={() => setSelectedPrediction(null)}>✕</button>
+            <h3>{selectedPrediction.team1?.name || 'Team 1'} vs. {selectedPrediction.team2?.name || 'Team 2'}</h3>
+            <p className="modal-game">{selectedPrediction.game}</p>
+            <p className="modal-tournament">{selectedPrediction.tournament}</p>
+            <p className="modal-date">Date: {selectedPrediction.date ? new Date(selectedPrediction.date).toLocaleDateString() : 'TBD'}</p>
+            
+            <div className="prediction-details">
+              <p className="winner">
+                <strong>Predicted Winner:</strong> {selectedPrediction.prediction?.winner || 'Unknown'}
+              </p>
+              <p className="confidence">
+                <strong>Confidence:</strong> {selectedPrediction.prediction?.confidence 
+                  ? `${Math.round(selectedPrediction.prediction.confidence * 100)}%`
+                  : 'N/A'}
+              </p>
+              {selectedPrediction.prediction?.score && (
+                <p className="score">
+                  <strong>Predicted Score:</strong> {selectedPrediction.prediction.score}
+                </p>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
+  );
+
+  return (
+    <SportPage
+      title="Esports"
+      sportType="esports"
+      fallbackImageSrc="/zen/esports-background.jpg"
+    >
+      {content}
+    </SportPage>
   );
 };
 
